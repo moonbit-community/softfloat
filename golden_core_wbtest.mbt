@@ -1,5 +1,5 @@
 ///|
-test "golden core vectors match committed C oracle records" {
+test "core vectors" {
   // x86_8086_sse ui32_to_f16 near_even after 1 00000001 3C00 00
   let result0 = ui32_to_f16(
     Context::default().with_rounding(NearEven).with_tininess(AfterRounding),
