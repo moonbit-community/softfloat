@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "myfreess/softfloat"
+package "moonbit-community/softfloat"
 
 // Values
 pub fn bf16_is_signaling_nan(BF16) -> Bool

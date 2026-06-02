@@ -1,4 +1,4 @@
-name = "myfreess/softfloat"
+name = "moonbit-community/softfloat"
 
 version = "0.1.0"
 

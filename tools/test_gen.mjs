@@ -1437,7 +1437,7 @@ function sweepDigestTests(file, source) {
 function moonPkg() {
   return [
     "import {",
-    '  "myfreess/softfloat" @sf,',
+    '  "moonbit-community/softfloat" @sf,',
     '  "moonbitlang/core/debug",',
     '} for "test"',
     "",
