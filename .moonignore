@@ -1,0 +1,7 @@
+target/
+.mooncakes/
+_build
+__pycache__/
+
+# Oracle inputs are used to generate checked-in tests, not by the library.
+/tools/vectors/
