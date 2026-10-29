@@ -40,17 +40,17 @@ pub fn f16_to_f32(Context, F16) -> SoftResult[F32]
 
 pub fn f16_to_f64(Context, F16) -> SoftResult[F64]
 
-pub fn f16_to_i32(Context, F16, RoundingMode, Bool) -> SoftResult[Int]
+pub fn f16_to_i32(Context, F16, RoundingMode, Bool) -> SoftResult[Int32]
 
-pub fn f16_to_i32_min_mag(Context, F16, Bool) -> SoftResult[Int]
+pub fn f16_to_i32_min_mag(Context, F16, Bool) -> SoftResult[Int32]
 
 pub fn f16_to_i64(Context, F16, RoundingMode, Bool) -> SoftResult[Int64]
 
 pub fn f16_to_i64_min_mag(Context, F16, Bool) -> SoftResult[Int64]
 
-pub fn f16_to_ui32(Context, F16, RoundingMode, Bool) -> SoftResult[UInt]
+pub fn f16_to_ui32(Context, F16, RoundingMode, Bool) -> SoftResult[UInt32]
 
-pub fn f16_to_ui32_min_mag(Context, F16, Bool) -> SoftResult[UInt]
+pub fn f16_to_ui32_min_mag(Context, F16, Bool) -> SoftResult[UInt32]
 
 pub fn f16_to_ui64(Context, F16, RoundingMode, Bool) -> SoftResult[UInt64]
 
@@ -92,17 +92,17 @@ pub fn f32_to_f16(Context, F32) -> SoftResult[F16]
 
 pub fn f32_to_f64(Context, F32) -> SoftResult[F64]
 
-pub fn f32_to_i32(Context, F32, RoundingMode, Bool) -> SoftResult[Int]
+pub fn f32_to_i32(Context, F32, RoundingMode, Bool) -> SoftResult[Int32]
 
-pub fn f32_to_i32_min_mag(Context, F32, Bool) -> SoftResult[Int]
+pub fn f32_to_i32_min_mag(Context, F32, Bool) -> SoftResult[Int32]
 
 pub fn f32_to_i64(Context, F32, RoundingMode, Bool) -> SoftResult[Int64]
 
 pub fn f32_to_i64_min_mag(Context, F32, Bool) -> SoftResult[Int64]
 
-pub fn f32_to_ui32(Context, F32, RoundingMode, Bool) -> SoftResult[UInt]
+pub fn f32_to_ui32(Context, F32, RoundingMode, Bool) -> SoftResult[UInt32]
 
-pub fn f32_to_ui32_min_mag(Context, F32, Bool) -> SoftResult[UInt]
+pub fn f32_to_ui32_min_mag(Context, F32, Bool) -> SoftResult[UInt32]
 
 pub fn f32_to_ui64(Context, F32, RoundingMode, Bool) -> SoftResult[UInt64]
 
@@ -142,27 +142,27 @@ pub fn f64_to_f16(Context, F64) -> SoftResult[F16]
 
 pub fn f64_to_f32(Context, F64) -> SoftResult[F32]
 
-pub fn f64_to_i32(Context, F64, RoundingMode, Bool) -> SoftResult[Int]
+pub fn f64_to_i32(Context, F64, RoundingMode, Bool) -> SoftResult[Int32]
 
-pub fn f64_to_i32_min_mag(Context, F64, Bool) -> SoftResult[Int]
+pub fn f64_to_i32_min_mag(Context, F64, Bool) -> SoftResult[Int32]
 
 pub fn f64_to_i64(Context, F64, RoundingMode, Bool) -> SoftResult[Int64]
 
 pub fn f64_to_i64_min_mag(Context, F64, Bool) -> SoftResult[Int64]
 
-pub fn f64_to_ui32(Context, F64, RoundingMode, Bool) -> SoftResult[UInt]
+pub fn f64_to_ui32(Context, F64, RoundingMode, Bool) -> SoftResult[UInt32]
 
-pub fn f64_to_ui32_min_mag(Context, F64, Bool) -> SoftResult[UInt]
+pub fn f64_to_ui32_min_mag(Context, F64, Bool) -> SoftResult[UInt32]
 
 pub fn f64_to_ui64(Context, F64, RoundingMode, Bool) -> SoftResult[UInt64]
 
 pub fn f64_to_ui64_min_mag(Context, F64, Bool) -> SoftResult[UInt64]
 
-pub fn i32_to_f16(Context, Int) -> SoftResult[F16]
+pub fn i32_to_f16(Context, Int32) -> SoftResult[F16]
 
-pub fn i32_to_f32(Context, Int) -> SoftResult[F32]
+pub fn i32_to_f32(Context, Int32) -> SoftResult[F32]
 
-pub fn i32_to_f64(Context, Int) -> SoftResult[F64]
+pub fn i32_to_f64(Context, Int32) -> SoftResult[F64]
 
 pub fn i64_to_f16(Context, Int64) -> SoftResult[F16]
 
@@ -170,11 +170,11 @@ pub fn i64_to_f32(Context, Int64) -> SoftResult[F32]
 
 pub fn i64_to_f64(Context, Int64) -> SoftResult[F64]
 
-pub fn ui32_to_f16(Context, UInt) -> SoftResult[F16]
+pub fn ui32_to_f16(Context, UInt32) -> SoftResult[F16]
 
-pub fn ui32_to_f32(Context, UInt) -> SoftResult[F32]
+pub fn ui32_to_f32(Context, UInt32) -> SoftResult[F32]
 
-pub fn ui32_to_f64(Context, UInt) -> SoftResult[F64]
+pub fn ui32_to_f64(Context, UInt32) -> SoftResult[F64]
 
 pub fn ui64_to_f16(Context, UInt64) -> SoftResult[F16]
 
@@ -205,16 +205,16 @@ pub fn Context::with_rounding(Self, RoundingMode) -> Self
 pub fn Context::with_specialization(Self, Specialization) -> Self
 pub fn Context::with_tininess(Self, TininessMode) -> Self
 
-pub struct ExceptionFlags(UInt)
+pub struct ExceptionFlags(UInt32)
 pub fn ExceptionFlags::contains(Self, Self) -> Bool
 pub fn ExceptionFlags::empty() -> Self
-pub fn ExceptionFlags::from_bits(UInt) -> Self
+pub fn ExceptionFlags::from_bits(UInt32) -> Self
 pub fn ExceptionFlags::inexact() -> Self
 pub fn ExceptionFlags::infinite() -> Self
 pub fn ExceptionFlags::invalid() -> Self
 pub fn ExceptionFlags::merge(Self, Self) -> Self
 pub fn ExceptionFlags::overflow() -> Self
-pub fn ExceptionFlags::to_bits(Self) -> UInt
+pub fn ExceptionFlags::to_bits(Self) -> UInt32
 pub fn ExceptionFlags::underflow() -> Self
 
 pub struct F16(UInt16)
@@ -231,19 +231,19 @@ pub fn F16::sub(Self, Context, Self) -> SoftResult[Self]
 pub fn F16::to_bits(Self) -> UInt16
 pub fn F16::to_f32(Self, Context) -> SoftResult[F32]
 pub fn F16::to_f64(Self, Context) -> SoftResult[F64]
-pub fn F16::to_i32(Self, Context, RoundingMode, Bool) -> SoftResult[Int]
-pub fn F16::to_i32_min_mag(Self, Context, Bool) -> SoftResult[Int]
+pub fn F16::to_i32(Self, Context, RoundingMode, Bool) -> SoftResult[Int32]
+pub fn F16::to_i32_min_mag(Self, Context, Bool) -> SoftResult[Int32]
 pub fn F16::to_i64(Self, Context, RoundingMode, Bool) -> SoftResult[Int64]
 pub fn F16::to_i64_min_mag(Self, Context, Bool) -> SoftResult[Int64]
-pub fn F16::to_ui32(Self, Context, RoundingMode, Bool) -> SoftResult[UInt]
-pub fn F16::to_ui32_min_mag(Self, Context, Bool) -> SoftResult[UInt]
+pub fn F16::to_ui32(Self, Context, RoundingMode, Bool) -> SoftResult[UInt32]
+pub fn F16::to_ui32_min_mag(Self, Context, Bool) -> SoftResult[UInt32]
 pub fn F16::to_ui64(Self, Context, RoundingMode, Bool) -> SoftResult[UInt64]
 pub fn F16::to_ui64_min_mag(Self, Context, Bool) -> SoftResult[UInt64]
 
-pub struct F32(UInt)
+pub struct F32(UInt32)
 pub fn F32::add(Self, Context, Self) -> SoftResult[Self]
 pub fn F32::div(Self, Context, Self) -> SoftResult[Self]
-pub fn F32::from_bits(UInt) -> Self
+pub fn F32::from_bits(UInt32) -> Self
 pub fn F32::from_float_bits(Float) -> Self
 pub fn F32::is_signaling_nan(Self) -> Bool
 pub fn F32::mul(Self, Context, Self) -> SoftResult[Self]
@@ -253,16 +253,16 @@ pub fn F32::round_to_int(Self, Context, RoundingMode, Bool) -> SoftResult[Self]
 pub fn F32::sqrt(Self, Context) -> SoftResult[Self]
 pub fn F32::sub(Self, Context, Self) -> SoftResult[Self]
 pub fn F32::to_bf16(Self, Context) -> SoftResult[BF16]
-pub fn F32::to_bits(Self) -> UInt
+pub fn F32::to_bits(Self) -> UInt32
 pub fn F32::to_f16(Self, Context) -> SoftResult[F16]
 pub fn F32::to_f64(Self, Context) -> SoftResult[F64]
 pub fn F32::to_float_bits(Self) -> Float
-pub fn F32::to_i32(Self, Context, RoundingMode, Bool) -> SoftResult[Int]
-pub fn F32::to_i32_min_mag(Self, Context, Bool) -> SoftResult[Int]
+pub fn F32::to_i32(Self, Context, RoundingMode, Bool) -> SoftResult[Int32]
+pub fn F32::to_i32_min_mag(Self, Context, Bool) -> SoftResult[Int32]
 pub fn F32::to_i64(Self, Context, RoundingMode, Bool) -> SoftResult[Int64]
 pub fn F32::to_i64_min_mag(Self, Context, Bool) -> SoftResult[Int64]
-pub fn F32::to_ui32(Self, Context, RoundingMode, Bool) -> SoftResult[UInt]
-pub fn F32::to_ui32_min_mag(Self, Context, Bool) -> SoftResult[UInt]
+pub fn F32::to_ui32(Self, Context, RoundingMode, Bool) -> SoftResult[UInt32]
+pub fn F32::to_ui32_min_mag(Self, Context, Bool) -> SoftResult[UInt32]
 pub fn F32::to_ui64(Self, Context, RoundingMode, Bool) -> SoftResult[UInt64]
 pub fn F32::to_ui64_min_mag(Self, Context, Bool) -> SoftResult[UInt64]
 
@@ -282,12 +282,12 @@ pub fn F64::to_bits(Self) -> UInt64
 pub fn F64::to_double_bits(Self) -> Double
 pub fn F64::to_f16(Self, Context) -> SoftResult[F16]
 pub fn F64::to_f32(Self, Context) -> SoftResult[F32]
-pub fn F64::to_i32(Self, Context, RoundingMode, Bool) -> SoftResult[Int]
-pub fn F64::to_i32_min_mag(Self, Context, Bool) -> SoftResult[Int]
+pub fn F64::to_i32(Self, Context, RoundingMode, Bool) -> SoftResult[Int32]
+pub fn F64::to_i32_min_mag(Self, Context, Bool) -> SoftResult[Int32]
 pub fn F64::to_i64(Self, Context, RoundingMode, Bool) -> SoftResult[Int64]
 pub fn F64::to_i64_min_mag(Self, Context, Bool) -> SoftResult[Int64]
-pub fn F64::to_ui32(Self, Context, RoundingMode, Bool) -> SoftResult[UInt]
-pub fn F64::to_ui32_min_mag(Self, Context, Bool) -> SoftResult[UInt]
+pub fn F64::to_ui32(Self, Context, RoundingMode, Bool) -> SoftResult[UInt32]
+pub fn F64::to_ui32_min_mag(Self, Context, Bool) -> SoftResult[UInt32]
 pub fn F64::to_ui64(Self, Context, RoundingMode, Bool) -> SoftResult[UInt64]
 pub fn F64::to_ui64_min_mag(Self, Context, Bool) -> SoftResult[UInt64]
 
@@ -299,6 +299,8 @@ pub(all) enum RoundingMode {
   NearMaxMag
   Odd
 } derive(Eq)
+pub fn RoundingMode::equal(Self, Self) -> Bool
+pub fn RoundingMode::not_equal(Self, Self) -> Bool
 
 pub(all) struct SoftResult[T] {
   value : T
@@ -309,13 +311,16 @@ pub(all) enum Specialization {
   X86_8086SSE
   RISCV
 } derive(Eq)
+pub fn Specialization::equal(Self, Self) -> Bool
+pub fn Specialization::not_equal(Self, Self) -> Bool
 
 pub(all) enum TininessMode {
   BeforeRounding
   AfterRounding
 } derive(Eq)
+pub fn TininessMode::equal(Self, Self) -> Bool
+pub fn TininessMode::not_equal(Self, Self) -> Bool
 
 // Type aliases
 
 // Traits
-

@@ -11,7 +11,7 @@ pub fn sweep_lcg_next(state : UInt64) -> UInt64 {
 }
 
 ///|
-pub fn sweep_rounding4(index : Int) -> @sf.RoundingMode {
+pub fn sweep_rounding4(index : Int32) -> @sf.RoundingMode {
   match index {
     0 => @sf.RoundingMode::NearEven
     1 => @sf.RoundingMode::Min
@@ -21,7 +21,7 @@ pub fn sweep_rounding4(index : Int) -> @sf.RoundingMode {
 }
 
 ///|
-pub fn sweep_rounding6(index : Int) -> @sf.RoundingMode {
+pub fn sweep_rounding6(index : Int32) -> @sf.RoundingMode {
   match index {
     0 => @sf.RoundingMode::NearEven
     1 => @sf.RoundingMode::MinMag
@@ -33,7 +33,7 @@ pub fn sweep_rounding6(index : Int) -> @sf.RoundingMode {
 }
 
 ///|
-pub fn sweep_tininess(index : Int) -> @sf.TininessMode {
+pub fn sweep_tininess(index : Int32) -> @sf.TininessMode {
   if index == 0 {
     @sf.TininessMode::AfterRounding
   } else {
@@ -43,7 +43,7 @@ pub fn sweep_tininess(index : Int) -> @sf.TininessMode {
 
 ///|
 pub fn sweep_context(
-  spec : Int,
+  spec : Int32,
   rounding : @sf.RoundingMode,
   tininess : @sf.TininessMode,
 ) -> @sf.Context {
@@ -56,7 +56,7 @@ pub fn sweep_context(
 }
 
 ///|
-pub fn sweep_edge_f16(index : Int) -> UInt16 {
+pub fn sweep_edge_f16(index : Int32) -> UInt16 {
   match index {
     0 => 0x0000
     1 => 0x8000
@@ -81,7 +81,7 @@ pub fn sweep_edge_f16(index : Int) -> UInt16 {
 }
 
 ///|
-pub fn sweep_edge_f32(index : Int) -> UInt {
+pub fn sweep_edge_f32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x80000000U
@@ -106,7 +106,7 @@ pub fn sweep_edge_f32(index : Int) -> UInt {
 }
 
 ///|
-pub fn sweep_edge_f64(index : Int) -> UInt64 {
+pub fn sweep_edge_f64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x8000000000000000UL
@@ -131,7 +131,7 @@ pub fn sweep_edge_f64(index : Int) -> UInt64 {
 }
 
 ///|
-pub fn sweep_edge_ui32(index : Int) -> UInt {
+pub fn sweep_edge_ui32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x00000001U
@@ -145,7 +145,7 @@ pub fn sweep_edge_ui32(index : Int) -> UInt {
 }
 
 ///|
-pub fn sweep_edge_i32(index : Int) -> UInt {
+pub fn sweep_edge_i32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x00000001U
@@ -158,7 +158,7 @@ pub fn sweep_edge_i32(index : Int) -> UInt {
 }
 
 ///|
-pub fn sweep_edge_ui64(index : Int) -> UInt64 {
+pub fn sweep_edge_ui64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x0000000000000001UL
@@ -172,7 +172,7 @@ pub fn sweep_edge_ui64(index : Int) -> UInt64 {
 }
 
 ///|
-pub fn sweep_edge_i64(index : Int) -> UInt64 {
+pub fn sweep_edge_i64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x0000000000000001UL
@@ -186,8 +186,8 @@ pub fn sweep_edge_i64(index : Int) -> UInt64 {
 
 ///|
 fn sweep_digest_exhaustive_f16_f16_round_to_int_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   for index in start..<end {
@@ -209,8 +209,8 @@ fn sweep_digest_exhaustive_f16_f16_round_to_int_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_exhaustive_f16_f16_to_f32_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   for index in start..<end {

@@ -21,12 +21,12 @@ pub fn F32::to_f16(self : F32, context : Context) -> SoftResult[F16] {
         context: common.context,
       }
     } else {
-      { value: F16::from_bits(pack_to_f16_ui(sign, 0x1F, 0)), context }
+      { value: F16::from_bits(pack_to_f16_ui(sign, 0x1F, 0)), context, }
     }
   } else {
     let frac16 = (frac >> 9) | (if (frac & 0x1FFU) != 0U { 1U } else { 0U })
     if (exp.reinterpret_as_uint() | frac16) == 0U {
-      { value: F16::from_bits(pack_to_f16_ui(sign, 0, 0)), context }
+      { value: F16::from_bits(pack_to_f16_ui(sign, 0, 0)), context, }
     } else {
       round_pack_to_f16(context, sign, exp - 0x71, frac16 | 0x4000U)
     }
@@ -54,12 +54,12 @@ pub fn F32::to_f64(self : F32, context : Context) -> SoftResult[F64] {
         context: common.context,
       }
     } else {
-      { value: F64::from_bits(pack_to_f64_ui(sign, 0x7FF, 0UL)), context }
+      { value: F64::from_bits(pack_to_f64_ui(sign, 0x7FF, 0UL)), context, }
     }
   } else {
     if exp == 0 {
       if frac == 0U {
-        return { value: F64::from_bits(pack_to_f64_ui(sign, 0, 0UL)), context }
+        return { value: F64::from_bits(pack_to_f64_ui(sign, 0, 0UL)), context, }
       }
       let norm = norm_subnormal_f32_sig(frac)
       exp = norm.exp - 1
@@ -101,23 +101,23 @@ pub fn f32_is_signaling_nan(a : F32) -> Bool {
 ///|
 fn f32_propagate_nan_result(
   context : Context,
-  ui_a : UInt,
-  ui_b : UInt,
+  ui_a : UInt32,
+  ui_b : UInt32,
 ) -> SoftResult[F32] {
   let propagated = propagate_nan_f32_ui(context, ui_a, ui_b)
-  { value: F32::from_bits(propagated.value), context: propagated.context }
+  { value: F32::from_bits(propagated.value), context: propagated.context, }
 }
 
 ///|
 fn f32_propagate_nan3_result(
   context : Context,
-  ui_a : UInt,
-  ui_b : UInt,
-  ui_c : UInt,
+  ui_a : UInt32,
+  ui_b : UInt32,
+  ui_c : UInt32,
 ) -> SoftResult[F32] {
   let ab = propagate_nan_f32_ui(context, ui_a, ui_b)
   let abc = propagate_nan_f32_ui(ab.context, ab.value, ui_c)
-  { value: F32::from_bits(abc.value), context: abc.context }
+  { value: F32::from_bits(abc.value), context: abc.context, }
 }
 
 ///|
@@ -138,7 +138,7 @@ pub fn F32::round_to_int(
   let exp = exp_f32_ui(ui_a)
   if exp <= 0x7E {
     if ui_a << 1 == 0U {
-      return { value: self, context }
+      return { value: self, context, }
     }
     let mut context = context
     if exact {
@@ -159,12 +159,12 @@ pub fn F32::round_to_int(
       Odd => ui_z = ui_z | pack_to_f32_ui(false, 0x7F, 0U)
       MinMag => ()
     }
-    { value: F32::from_bits(ui_z), context }
+    { value: F32::from_bits(ui_z), context, }
   } else if exp >= 0x96 {
     if exp == 0xFF && frac_f32_ui(ui_a) != 0U {
       f32_propagate_nan_result(context, ui_a, 0U)
     } else {
-      { value: self, context }
+      { value: self, context, }
     }
   } else {
     let mut ui_z = ui_a
@@ -191,7 +191,7 @@ pub fn F32::round_to_int(
         context = context.raise_flags(ExceptionFlags::inexact())
       }
     }
-    { value: F32::from_bits(ui_z), context }
+    { value: F32::from_bits(ui_z), context, }
   }
 }
 
@@ -209,7 +209,11 @@ pub fn f32_round_to_int(
 }
 
 ///|
-fn f32_add_mags(context : Context, ui_a : UInt, ui_b : UInt) -> SoftResult[F32] {
+fn f32_add_mags(
+  context : Context,
+  ui_a : UInt32,
+  ui_b : UInt32,
+) -> SoftResult[F32] {
   let exp_a = exp_f32_ui(ui_a)
   let mut sig_a = frac_f32_ui(ui_a)
   let exp_b = exp_f32_ui(ui_b)
@@ -217,12 +221,12 @@ fn f32_add_mags(context : Context, ui_a : UInt, ui_b : UInt) -> SoftResult[F32] 
   let exp_diff = exp_a - exp_b
   if exp_diff == 0 {
     if exp_a == 0 {
-      { value: F32::from_bits(ui_a + sig_b), context }
+      { value: F32::from_bits(ui_a + sig_b), context, }
     } else if exp_a == 0xFF {
       if (sig_a | sig_b) != 0U {
         f32_propagate_nan_result(context, ui_a, ui_b)
       } else {
-        { value: F32::from_bits(ui_a), context }
+        { value: F32::from_bits(ui_a), context, }
       }
     } else {
       let sign_z = sign_f32_ui(ui_a)
@@ -261,7 +265,7 @@ fn f32_add_mags(context : Context, ui_a : UInt, ui_b : UInt) -> SoftResult[F32] 
         if sig_a != 0U {
           return f32_propagate_nan_result(context, ui_a, ui_b)
         }
-        return { value: F32::from_bits(ui_a), context }
+        return { value: F32::from_bits(ui_a), context, }
       }
       exp_z = exp_a
       sig_b = sig_b + (if exp_b != 0 { 0x20000000U } else { sig_b })
@@ -278,7 +282,11 @@ fn f32_add_mags(context : Context, ui_a : UInt, ui_b : UInt) -> SoftResult[F32] 
 }
 
 ///|
-fn f32_sub_mags(context : Context, ui_a : UInt, ui_b : UInt) -> SoftResult[F32] {
+fn f32_sub_mags(
+  context : Context,
+  ui_a : UInt32,
+  ui_b : UInt32,
+) -> SoftResult[F32] {
   let mut exp_a = exp_f32_ui(ui_a)
   let mut sig_a = frac_f32_ui(ui_a)
   let exp_b = exp_f32_ui(ui_b)
@@ -358,7 +366,7 @@ fn f32_sub_mags(context : Context, ui_a : UInt, ui_b : UInt) -> SoftResult[F32] 
         if sig_a != 0U {
           return f32_propagate_nan_result(context, ui_a, ui_b)
         }
-        return { value: F32::from_bits(ui_a), context }
+        return { value: F32::from_bits(ui_a), context, }
       }
       exp_z = exp_a - 1
       sig_x = sig_a | 0x40000000U
@@ -458,7 +466,7 @@ pub fn f32_mul(context : Context, a : F32, b : F32) -> SoftResult[F32] {
         context: context.raise_flags(ExceptionFlags::invalid()),
       }
     }
-    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0xFF, 0U)), context }
+    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0xFF, 0U)), context, }
   }
   if exp_b == 0xFF {
     if sig_b != 0U {
@@ -470,11 +478,11 @@ pub fn f32_mul(context : Context, a : F32, b : F32) -> SoftResult[F32] {
         context: context.raise_flags(ExceptionFlags::invalid()),
       }
     }
-    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0xFF, 0U)), context }
+    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0xFF, 0U)), context, }
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context }
+      return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context, }
     }
     let norm = norm_subnormal_f32_sig(sig_a)
     exp_a = norm.exp
@@ -482,7 +490,7 @@ pub fn f32_mul(context : Context, a : F32, b : F32) -> SoftResult[F32] {
   }
   if exp_b == 0 {
     if sig_b == 0U {
-      return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context }
+      return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context, }
     }
     let norm = norm_subnormal_f32_sig(sig_b)
     exp_b = norm.exp
@@ -539,13 +547,13 @@ pub fn f32_div(context : Context, a : F32, b : F32) -> SoftResult[F32] {
         context: context.raise_flags(ExceptionFlags::invalid()),
       }
     }
-    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0xFF, 0U)), context }
+    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0xFF, 0U)), context, }
   }
   if exp_b == 0xFF {
     if sig_b != 0U {
       return f32_propagate_nan_result(context, ui_a, ui_b)
     }
-    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context }
+    return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context, }
   }
   if exp_b == 0 {
     if sig_b == 0U {
@@ -566,7 +574,7 @@ pub fn f32_div(context : Context, a : F32, b : F32) -> SoftResult[F32] {
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context }
+      return { value: F32::from_bits(pack_to_f32_ui(sign_z, 0, 0U)), context, }
     }
     let norm = norm_subnormal_f32_sig(sig_a)
     exp_a = norm.exp
@@ -621,7 +629,7 @@ pub fn f32_sqrt(context : Context, a : F32) -> SoftResult[F32] {
       return f32_propagate_nan_result(context, ui_a, 0U)
     }
     if !sign_a {
-      return { value: a, context }
+      return { value: a, context, }
     }
     return {
       value: F32::from_bits(default_nan_f32_ui(context.specialization)),
@@ -630,7 +638,7 @@ pub fn f32_sqrt(context : Context, a : F32) -> SoftResult[F32] {
   }
   if sign_a {
     if exp_a == 0 && sig_a == 0U {
-      return { value: a, context }
+      return { value: a, context, }
     }
     return {
       value: F32::from_bits(default_nan_f32_ui(context.specialization)),
@@ -639,7 +647,7 @@ pub fn f32_sqrt(context : Context, a : F32) -> SoftResult[F32] {
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: a, context }
+      return { value: a, context, }
     }
     let norm = norm_subnormal_f32_sig(sig_a)
     exp_a = norm.exp
@@ -705,7 +713,7 @@ pub fn f32_rem(context : Context, a : F32, b : F32) -> SoftResult[F32] {
     if sig_b != 0U {
       return f32_propagate_nan_result(context, ui_a, ui_b)
     }
-    return { value: a, context }
+    return { value: a, context, }
   }
   if exp_b == 0 {
     if sig_b == 0U {
@@ -720,7 +728,7 @@ pub fn f32_rem(context : Context, a : F32, b : F32) -> SoftResult[F32] {
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: a, context }
+      return { value: a, context, }
     }
     let norm = norm_subnormal_f32_sig(sig_a)
     exp_a = norm.exp
@@ -732,7 +740,7 @@ pub fn f32_rem(context : Context, a : F32, b : F32) -> SoftResult[F32] {
   let mut q = 0U
   if exp_diff < 1 {
     if exp_diff < -1 {
-      return { value: a, context }
+      return { value: a, context, }
     }
     sig_b = sig_b << 6
     if exp_diff != 0 {
@@ -840,7 +848,7 @@ pub fn f32_mul_add(
     if sig_c != 0U {
       return f32_propagate_nan_result(context, 0U, ui_c)
     }
-    return { value: c, context }
+    return { value: c, context, }
   }
   if exp_a == 0 {
     if sig_a == 0U {
@@ -942,23 +950,23 @@ pub fn f32_mul_add(
 fn f32_mul_add_inf_prod(
   context : Context,
   sign_prod : Bool,
-  exp_mag : Int,
-  sig_mag : UInt,
+  exp_mag : Int32,
+  sig_mag : UInt32,
   sign_c : Bool,
-  exp_c : Int,
-  sig_c : UInt,
-  ui_c : UInt,
+  exp_c : Int32,
+  sig_c : UInt32,
+  ui_c : UInt32,
 ) -> SoftResult[F32] {
   if exp_mag != 0 || sig_mag != 0U {
     let ui_z = pack_to_f32_ui(sign_prod, 0xFF, 0U)
     if exp_c != 0xFF {
-      return { value: F32::from_bits(ui_z), context }
+      return { value: F32::from_bits(ui_z), context, }
     }
     if sig_c != 0U {
       return f32_propagate_nan_result(context, ui_z, ui_c)
     }
     if sign_prod == sign_c {
-      return { value: F32::from_bits(ui_z), context }
+      return { value: F32::from_bits(ui_z), context, }
     }
   }
   let invalid_context = context.raise_flags(ExceptionFlags::invalid())
@@ -974,9 +982,9 @@ fn f32_mul_add_zero_prod(
   context : Context,
   sign_prod : Bool,
   sign_c : Bool,
-  exp_c : Int,
-  sig_c : UInt,
-  ui_c : UInt,
+  exp_c : Int32,
+  sig_c : UInt32,
+  ui_c : UInt32,
 ) -> SoftResult[F32] {
   if exp_c == 0 && sig_c == 0U && sign_prod != sign_c {
     {
@@ -984,7 +992,7 @@ fn f32_mul_add_zero_prod(
       context,
     }
   } else {
-    { value: F32::from_bits(ui_c), context }
+    { value: F32::from_bits(ui_c), context, }
   }
 }
 
@@ -993,7 +1001,7 @@ fn f32_invalid_ui32_result(
   context : Context,
   sign : Bool,
   is_nan : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   let value = if is_nan {
     ui32_from_nan(context.specialization)
   } else if sign {
@@ -1001,7 +1009,7 @@ fn f32_invalid_ui32_result(
   } else {
     ui32_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
@@ -1009,7 +1017,7 @@ fn f32_invalid_i32_result(
   context : Context,
   sign : Bool,
   is_nan : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   let value = if is_nan {
     i32_from_nan(context.specialization)
   } else if sign {
@@ -1017,7 +1025,7 @@ fn f32_invalid_i32_result(
   } else {
     i32_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
@@ -1033,7 +1041,7 @@ fn f32_invalid_ui64_result(
   } else {
     ui64_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
@@ -1049,7 +1057,7 @@ fn f32_invalid_i64_result(
   } else {
     i64_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
@@ -1064,7 +1072,7 @@ pub fn F32::to_ui32(
   context : Context,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   let bits = self.to_bits()
   let sign = sign_f32_ui(bits)
   let exp = exp_f32_ui(bits)
@@ -1095,7 +1103,7 @@ pub fn F32::to_i32(
   context : Context,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   let bits = self.to_bits()
   let sign = sign_f32_ui(bits)
   let exp = exp_f32_ui(bits)
@@ -1194,7 +1202,7 @@ pub fn F32::to_ui32_min_mag(
   self : F32,
   context : Context,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   let bits = self.to_bits()
   let exp = exp_f32_ui(bits)
   let mut sig = frac_f32_ui(bits)
@@ -1205,7 +1213,7 @@ pub fn F32::to_ui32_min_mag(
     } else {
       context
     }
-    { value: 0U, context }
+    { value: 0U, context, }
   } else {
     let sign = sign_f32_ui(bits)
     if sign || shift_dist < 0 {
@@ -1218,7 +1226,7 @@ pub fn F32::to_ui32_min_mag(
       } else {
         context
       }
-      { value, context }
+      { value, context, }
     }
   }
 }
@@ -1233,7 +1241,7 @@ pub fn F32::to_i32_min_mag(
   self : F32,
   context : Context,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   let bits = self.to_bits()
   let exp = exp_f32_ui(bits)
   let mut sig = frac_f32_ui(bits)
@@ -1244,12 +1252,12 @@ pub fn F32::to_i32_min_mag(
     } else {
       context
     }
-    { value: 0, context }
+    { value: 0, context, }
   } else {
     let sign = sign_f32_ui(bits)
     if shift_dist <= 0 {
       if bits == pack_to_f32_ui(true, 0x9E, 0U) {
-        { value: -0x7FFFFFFF - 1, context }
+        { value: -0x7FFFFFFF - 1, context, }
       } else {
         f32_invalid_i32_result(context, sign, exp == 0xFF && sig != 0U)
       }
@@ -1262,13 +1270,13 @@ pub fn F32::to_i32_min_mag(
       } else {
         context
       }
-      { value: if sign { -abs_value } else { abs_value }, context }
+      { value: if sign { -abs_value } else { abs_value }, context, }
     }
   }
 }
 
 ///|
-fn f32_min_mag_lost_bits(sig : UInt, shift_dist : Int) -> Bool {
+fn f32_min_mag_lost_bits(sig : UInt32, shift_dist : Int32) -> Bool {
   let lost_shift = 40 - shift_dist
   lost_shift < 0 && sig << (32 + lost_shift) != 0U
 }
@@ -1294,7 +1302,7 @@ pub fn F32::to_ui64_min_mag(
     } else {
       context
     }
-    { value: 0UL, context }
+    { value: 0UL, context, }
   } else {
     let sign = sign_f32_ui(bits)
     if sign || shift_dist < 0 {
@@ -1308,7 +1316,7 @@ pub fn F32::to_ui64_min_mag(
       } else {
         context
       }
-      { value, context }
+      { value, context, }
     }
   }
 }
@@ -1334,12 +1342,12 @@ pub fn F32::to_i64_min_mag(
     } else {
       context
     }
-    { value: 0L, context }
+    { value: 0L, context, }
   } else {
     let sign = sign_f32_ui(bits)
     if shift_dist <= 0 {
       if bits == pack_to_f32_ui(true, 0xBE, 0U) {
-        { value: -0x7FFFFFFFFFFFFFFFL - 1L, context }
+        { value: -0x7FFFFFFFFFFFFFFFL - 1L, context, }
       } else {
         f32_invalid_i64_result(context, sign, exp == 0xFF && sig != 0U)
       }
@@ -1352,7 +1360,7 @@ pub fn F32::to_i64_min_mag(
       } else {
         context
       }
-      { value: if sign { -abs_value } else { abs_value }, context }
+      { value: if sign { -abs_value } else { abs_value }, context, }
     }
   }
 }
@@ -1366,7 +1374,7 @@ pub fn f32_to_ui32(
   a : F32,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   a.to_ui32(context, rounding, exact)
 }
 
@@ -1392,7 +1400,7 @@ pub fn f32_to_i32(
   a : F32,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   a.to_i32(context, rounding, exact)
 }
 
@@ -1417,7 +1425,7 @@ pub fn f32_to_ui32_min_mag(
   context : Context,
   a : F32,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   a.to_ui32_min_mag(context, exact)
 }
 
@@ -1441,7 +1449,7 @@ pub fn f32_to_i32_min_mag(
   context : Context,
   a : F32,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   a.to_i32_min_mag(context, exact)
 }
 
@@ -1458,12 +1466,12 @@ pub fn f32_to_i64_min_mag(
 }
 
 ///|
-fn f32_both_zero(a : UInt, b : UInt) -> Bool {
+fn f32_both_zero(a : UInt32, b : UInt32) -> Bool {
   (a | b) << 1 == 0U
 }
 
 ///|
-fn f32_ordered_le(a : UInt, b : UInt) -> Bool {
+fn f32_ordered_le(a : UInt32, b : UInt32) -> Bool {
   let sign_a = sign_f32_ui(a)
   let sign_b = sign_f32_ui(b)
   if sign_a != sign_b {
@@ -1474,7 +1482,7 @@ fn f32_ordered_le(a : UInt, b : UInt) -> Bool {
 }
 
 ///|
-fn f32_ordered_lt(a : UInt, b : UInt) -> Bool {
+fn f32_ordered_lt(a : UInt32, b : UInt32) -> Bool {
   let sign_a = sign_f32_ui(a)
   let sign_b = sign_f32_ui(b)
   if sign_a != sign_b {
@@ -1487,8 +1495,8 @@ fn f32_ordered_lt(a : UInt, b : UInt) -> Bool {
 ///|
 fn f32_compare_nan_context(
   context : Context,
-  a : UInt,
-  b : UInt,
+  a : UInt32,
+  b : UInt32,
   quiet : Bool,
 ) -> Context {
   if is_nan_f32_ui(a) || is_nan_f32_ui(b) {
@@ -1512,9 +1520,9 @@ pub fn f32_eq(context : Context, a : F32, b : F32) -> SoftResult[Bool] {
   let ui_b = b.to_bits()
   let context = f32_compare_nan_context(context, ui_a, ui_b, true)
   if is_nan_f32_ui(ui_a) || is_nan_f32_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: ui_a == ui_b || f32_both_zero(ui_a, ui_b), context }
+    { value: ui_a == ui_b || f32_both_zero(ui_a, ui_b), context, }
   }
 }
 
@@ -1532,9 +1540,9 @@ pub fn f32_eq_signaling(
   let ui_b = b.to_bits()
   let context = f32_compare_nan_context(context, ui_a, ui_b, false)
   if is_nan_f32_ui(ui_a) || is_nan_f32_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: ui_a == ui_b || f32_both_zero(ui_a, ui_b), context }
+    { value: ui_a == ui_b || f32_both_zero(ui_a, ui_b), context, }
   }
 }
 
@@ -1547,9 +1555,9 @@ pub fn f32_le(context : Context, a : F32, b : F32) -> SoftResult[Bool] {
   let ui_a = a.to_bits()
   let ui_b = b.to_bits()
   if is_nan_f32_ui(ui_a) || is_nan_f32_ui(ui_b) {
-    { value: false, context: context.raise_flags(ExceptionFlags::invalid()) }
+    { value: false, context: context.raise_flags(ExceptionFlags::invalid()), }
   } else {
-    { value: f32_ordered_le(ui_a, ui_b), context }
+    { value: f32_ordered_le(ui_a, ui_b), context, }
   }
 }
 
@@ -1562,9 +1570,9 @@ pub fn f32_lt(context : Context, a : F32, b : F32) -> SoftResult[Bool] {
   let ui_a = a.to_bits()
   let ui_b = b.to_bits()
   if is_nan_f32_ui(ui_a) || is_nan_f32_ui(ui_b) {
-    { value: false, context: context.raise_flags(ExceptionFlags::invalid()) }
+    { value: false, context: context.raise_flags(ExceptionFlags::invalid()), }
   } else {
-    { value: f32_ordered_lt(ui_a, ui_b), context }
+    { value: f32_ordered_lt(ui_a, ui_b), context, }
   }
 }
 
@@ -1578,9 +1586,9 @@ pub fn f32_le_quiet(context : Context, a : F32, b : F32) -> SoftResult[Bool] {
   let ui_b = b.to_bits()
   let context = f32_compare_nan_context(context, ui_a, ui_b, true)
   if is_nan_f32_ui(ui_a) || is_nan_f32_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: f32_ordered_le(ui_a, ui_b), context }
+    { value: f32_ordered_le(ui_a, ui_b), context, }
   }
 }
 
@@ -1594,8 +1602,8 @@ pub fn f32_lt_quiet(context : Context, a : F32, b : F32) -> SoftResult[Bool] {
   let ui_b = b.to_bits()
   let context = f32_compare_nan_context(context, ui_a, ui_b, true)
   if is_nan_f32_ui(ui_a) || is_nan_f32_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: f32_ordered_lt(ui_a, ui_b), context }
+    { value: f32_ordered_lt(ui_a, ui_b), context, }
   }
 }

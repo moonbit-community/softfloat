@@ -1,6 +1,6 @@
 ///|
 /// Ports `softfloat_countLeadingZeros8` from `s_countLeadingZeros8.c`.
-fn count_leading_zeros8(a : UInt) -> Int {
+fn count_leading_zeros8(a : UInt32) -> Int32 {
   let a = a & 0xFFU
   if a >= 0x80U {
     0
@@ -25,7 +25,7 @@ fn count_leading_zeros8(a : UInt) -> Int {
 
 ///|
 /// Ports `softfloat_countLeadingZeros16` from `s_countLeadingZeros16.c`.
-fn count_leading_zeros16(a : UInt16) -> Int {
+fn count_leading_zeros16(a : UInt16) -> Int32 {
   if a >= 0x0100 {
     count_leading_zeros8((a >> 8).to_uint())
   } else {
@@ -35,7 +35,7 @@ fn count_leading_zeros16(a : UInt16) -> Int {
 
 ///|
 /// Ports `softfloat_countLeadingZeros32` from `s_countLeadingZeros32.c`.
-fn count_leading_zeros32(a : UInt) -> Int {
+fn count_leading_zeros32(a : UInt32) -> Int32 {
   if a >= 0x01000000U {
     count_leading_zeros8(a >> 24)
   } else if a >= 0x00010000U {
@@ -49,7 +49,7 @@ fn count_leading_zeros32(a : UInt) -> Int {
 
 ///|
 /// Ports `softfloat_countLeadingZeros64` from `s_countLeadingZeros64.c`.
-fn count_leading_zeros64(a : UInt64) -> Int {
+fn count_leading_zeros64(a : UInt64) -> Int32 {
   let hi = (a >> 32).to_uint()
   if hi != 0U {
     count_leading_zeros32(hi)
@@ -68,7 +68,7 @@ fn jam_bit64(nonzero : Bool) -> UInt64 {
 }
 
 ///|
-fn jam_bit32(nonzero : Bool) -> UInt {
+fn jam_bit32(nonzero : Bool) -> UInt32 {
   if nonzero {
     1U
   } else {
@@ -78,7 +78,7 @@ fn jam_bit32(nonzero : Bool) -> UInt {
 
 ///|
 /// Ports `softfloat_shiftRightJam32` from `s_shiftRightJam32.c`.
-fn shift_right_jam32(a : UInt, dist : Int) -> UInt {
+fn shift_right_jam32(a : UInt32, dist : Int32) -> UInt32 {
   if dist <= 0 {
     a
   } else if dist < 32 {
@@ -91,13 +91,13 @@ fn shift_right_jam32(a : UInt, dist : Int) -> UInt {
 
 ///|
 /// Ports `softfloat_shortShiftRightJam64` from `s_shortShiftRightJam64.c`.
-fn short_shift_right_jam64(a : UInt64, dist : Int) -> UInt64 {
+fn short_shift_right_jam64(a : UInt64, dist : Int32) -> UInt64 {
   shift_right_jam64(a, dist)
 }
 
 ///|
 /// Ports `softfloat_shiftRightJam64` from `s_shiftRightJam64.c`.
-fn shift_right_jam64(a : UInt64, dist : Int) -> UInt64 {
+fn shift_right_jam64(a : UInt64, dist : Int32) -> UInt64 {
   if dist <= 0 {
     a
   } else if dist < 64 {
@@ -113,23 +113,23 @@ fn shift_right_jam64(a : UInt64, dist : Int) -> UInt64 {
 fn shift_right_jam64_extra(
   a : UInt64,
   extra : UInt64,
-  dist : Int,
+  dist : Int32,
 ) -> UInt64Extra {
   if dist <= 0 {
-    { value: a, extra }
+    { value: a, extra, }
   } else {
     let shifted = if dist < 64 {
-      { value: a >> dist, extra: a << (64 - dist) }
+      { value: a >> dist, extra: a << (64 - dist), }
     } else {
-      { value: 0UL, extra: if dist == 64 { a } else { jam_bit64(a != 0UL) } }
+      { value: 0UL, extra: if dist == 64 { a } else { jam_bit64(a != 0UL) }, }
     }
-    { ..shifted, extra: shifted.extra | jam_bit64(extra != 0UL) }
+    { ..shifted, extra: shifted.extra | jam_bit64(extra != 0UL), }
   }
 }
 
 ///|
 /// Ports `softfloat_shortShiftRightJam128` from `s_shortShiftRightJam128.c`.
-fn short_shift_right_jam128(a : UInt128, dist : Int) -> UInt128 {
+fn short_shift_right_jam128(a : UInt128, dist : Int32) -> UInt128 {
   if dist <= 0 {
     a
   } else if dist < 64 {
@@ -147,7 +147,7 @@ fn short_shift_right_jam128(a : UInt128, dist : Int) -> UInt128 {
 
 ///|
 /// Ports `softfloat_shiftRightJam128` from `s_shiftRightJam128.c`.
-fn shift_right_jam128(a : UInt128, dist : Int) -> UInt128 {
+fn shift_right_jam128(a : UInt128, dist : Int32) -> UInt128 {
   if dist <= 0 {
     a
   } else if dist < 64 {
@@ -160,8 +160,8 @@ fn shift_right_jam128(a : UInt128, dist : Int) -> UInt128 {
     } else {
       ((a.hi & ((1UL << word_dist) - 1UL)) | a.lo) != 0UL
     }
-    { hi: 0UL, lo: shifted | jam_bit64(jammed) }
+    { hi: 0UL, lo: shifted | jam_bit64(jammed), }
   } else {
-    { hi: 0UL, lo: jam_bit64(!uint128_is_zero(a)) }
+    { hi: 0UL, lo: jam_bit64(!uint128_is_zero(a)), }
   }
 }

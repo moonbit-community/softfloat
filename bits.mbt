@@ -6,7 +6,7 @@ fn sign_f16_ui(bits : UInt16) -> Bool {
 
 ///|
 /// Ports `expF16UI` from SoftFloat `internals.h`.
-fn exp_f16_ui(bits : UInt16) -> Int {
+fn exp_f16_ui(bits : UInt16) -> Int32 {
   ((bits >> 10) & 0x1F).to_int()
 }
 
@@ -18,7 +18,7 @@ fn frac_f16_ui(bits : UInt16) -> UInt16 {
 
 ///|
 /// Ports `packToF16UI` from SoftFloat `internals.h`.
-fn pack_to_f16_ui(sign : Bool, exp : Int, sig : UInt16) -> UInt16 {
+fn pack_to_f16_ui(sign : Bool, exp : Int32, sig : UInt16) -> UInt16 {
   let sign_bits : UInt16 = if sign { 1 << 15 } else { 0 }
   sign_bits + (exp.to_uint16() << 10) + sig
 }
@@ -37,7 +37,7 @@ fn sign_bf16_ui(bits : UInt16) -> Bool {
 
 ///|
 /// Ports `expBF16UI` from SoftFloat `internals.h`.
-fn exp_bf16_ui(bits : UInt16) -> Int {
+fn exp_bf16_ui(bits : UInt16) -> Int32 {
   ((bits >> 7) & 0xFF).to_int()
 }
 
@@ -49,39 +49,39 @@ fn frac_bf16_ui(bits : UInt16) -> UInt16 {
 
 ///|
 /// Ports `packToBF16UI` from SoftFloat `internals.h`.
-fn pack_to_bf16_ui(sign : Bool, exp : Int, sig : UInt16) -> UInt16 {
+fn pack_to_bf16_ui(sign : Bool, exp : Int32, sig : UInt16) -> UInt16 {
   let sign_bits : UInt16 = if sign { 1 << 15 } else { 0 }
   sign_bits + (exp.to_uint16() << 7) + sig
 }
 
 ///|
 /// Ports `signF32UI` from SoftFloat `internals.h`.
-fn sign_f32_ui(bits : UInt) -> Bool {
+fn sign_f32_ui(bits : UInt32) -> Bool {
   bits >> 31 != 0U
 }
 
 ///|
 /// Ports `expF32UI` from SoftFloat `internals.h`.
-fn exp_f32_ui(bits : UInt) -> Int {
+fn exp_f32_ui(bits : UInt32) -> Int32 {
   ((bits >> 23) & 0xFFU).reinterpret_as_int()
 }
 
 ///|
 /// Ports `fracF32UI` from SoftFloat `internals.h`.
-fn frac_f32_ui(bits : UInt) -> UInt {
+fn frac_f32_ui(bits : UInt32) -> UInt32 {
   bits & 0x007FFFFFU
 }
 
 ///|
 /// Ports `packToF32UI` from SoftFloat `internals.h`.
-fn pack_to_f32_ui(sign : Bool, exp : Int, sig : UInt) -> UInt {
+fn pack_to_f32_ui(sign : Bool, exp : Int32, sig : UInt32) -> UInt32 {
   let sign_bits = if sign { 1U << 31 } else { 0U }
   sign_bits + (exp.reinterpret_as_uint() << 23) + sig
 }
 
 ///|
 /// Ports `isNaNF32UI` from SoftFloat `internals.h`.
-fn is_nan_f32_ui(bits : UInt) -> Bool {
+fn is_nan_f32_ui(bits : UInt32) -> Bool {
   (bits & 0x7F800000U) == 0x7F800000U && (bits & 0x007FFFFFU) != 0U
 }
 
@@ -93,7 +93,7 @@ fn sign_f64_ui(bits : UInt64) -> Bool {
 
 ///|
 /// Ports `expF64UI` from SoftFloat `internals.h`.
-fn exp_f64_ui(bits : UInt64) -> Int {
+fn exp_f64_ui(bits : UInt64) -> Int32 {
   ((bits >> 52) & 0x7FFUL).to_int()
 }
 
@@ -105,7 +105,7 @@ fn frac_f64_ui(bits : UInt64) -> UInt64 {
 
 ///|
 /// Ports `packToF64UI` from SoftFloat `internals.h`.
-fn pack_to_f64_ui(sign : Bool, exp : Int, sig : UInt64) -> UInt64 {
+fn pack_to_f64_ui(sign : Bool, exp : Int32, sig : UInt64) -> UInt64 {
   let sign_bits = if sign { 1UL << 63 } else { 0UL }
   sign_bits + (exp.to_uint64() << 52) + sig
 }

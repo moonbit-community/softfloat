@@ -55,7 +55,7 @@ pub(all) enum Specialization {
 /// `Context::raise_flags`; operations preserve any flags already present in
 /// the input context and OR in newly raised flags. Use `from_bits` when
 /// importing raw flag bits; it masks off bits outside the SoftFloat range.
-pub struct ExceptionFlags(UInt)
+pub struct ExceptionFlags(UInt32)
 
 ///|
 /// Returns an empty exception-flag set.
@@ -70,7 +70,7 @@ pub fn ExceptionFlags::empty() -> ExceptionFlags {
 /// Returns the raw SoftFloat exception flag bits.
 ///
 /// Only the low five bits are used by this package.
-pub fn ExceptionFlags::to_bits(self : ExceptionFlags) -> UInt {
+pub fn ExceptionFlags::to_bits(self : ExceptionFlags) -> UInt32 {
   self.0
 }
 
@@ -79,7 +79,7 @@ pub fn ExceptionFlags::to_bits(self : ExceptionFlags) -> UInt {
 ///
 /// Bits outside the SoftFloat exception mask are discarded, so
 /// `ExceptionFlags::from_bits(bits).to_bits()` is always in `0x00..0x1f`.
-pub fn ExceptionFlags::from_bits(bits : UInt) -> ExceptionFlags {
+pub fn ExceptionFlags::from_bits(bits : UInt32) -> ExceptionFlags {
   ExceptionFlags(bits & 0x1FU)
 }
 
@@ -189,7 +189,7 @@ pub fn Context::default() -> Context {
 /// specialization changes. This affects default NaNs, NaN propagation details,
 /// and invalid integer result constants for later operations.
 pub fn Context::riscv() -> Context {
-  { ..Context::default(), specialization: RISCV }
+  { ..Context::default(), specialization: RISCV, }
 }
 
 ///|
@@ -232,7 +232,7 @@ pub fn Context::with_specialization(
 ///
 /// Rounding mode, tininess mode, and specialization are preserved.
 pub fn Context::clear_flags(self : Context) -> Context {
-  { ..self, flags: ExceptionFlags::empty() }
+  { ..self, flags: ExceptionFlags::empty(), }
 }
 
 ///|
@@ -243,5 +243,5 @@ pub fn Context::clear_flags(self : Context) -> Context {
 /// specified by SoftFloat. Passing an empty flag set is a no-op; passing
 /// multiple bits raises all of them at once.
 pub fn Context::raise_flags(self : Context, flags : ExceptionFlags) -> Context {
-  { ..self, flags: self.flags.merge(flags) }
+  { ..self, flags: self.flags.merge(flags), }
 }

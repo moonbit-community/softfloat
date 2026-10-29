@@ -20,7 +20,7 @@ pub fn BF16::to_f32(self : BF16, context : Context) -> SoftResult[F32] {
         context: common.context,
       }
     } else {
-      { value: F32::from_bits(pack_to_f32_ui(sign, 0xFF, 0U)), context }
+      { value: F32::from_bits(pack_to_f32_ui(sign, 0xFF, 0U)), context, }
     }
   } else {
     {
@@ -53,12 +53,12 @@ pub fn F32::to_bf16(self : F32, context : Context) -> SoftResult[BF16] {
         context: common.context,
       }
     } else {
-      { value: BF16::from_bits(pack_to_bf16_ui(sign, 0xFF, 0)), context }
+      { value: BF16::from_bits(pack_to_bf16_ui(sign, 0xFF, 0)), context, }
     }
   } else {
     let frac16 = (frac >> 9) | (if (frac & 0x1FFU) != 0U { 1U } else { 0U })
     if (exp.reinterpret_as_uint() | frac16) == 0U {
-      { value: BF16::from_bits(pack_to_bf16_ui(sign, 0, 0)), context }
+      { value: BF16::from_bits(pack_to_bf16_ui(sign, 0, 0)), context, }
     } else {
       let mask = if exp != 0 { 0x4000U } else { 0U }
       let shifted_frac = if exp != 0 { frac16 } else { frac16 << 1 }

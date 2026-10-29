@@ -46,13 +46,16 @@ test "jam shifts cover boundary distances" {
   @debug.assert_eq(shift_right_jam64(0x8000000000000000UL, 65), 1UL)
   @debug.assert_eq(short_shift_right_jam64(0x0000000000000001UL, 1), 1UL)
 
-  let a = { hi: 1UL, lo: 0UL }
+  let a = { hi: 1UL, lo: 0UL, }
   assert_u128_eq(shift_right_jam128(a, 0), a)
-  assert_u128_eq(shift_right_jam128(a, 1), { hi: 0UL, lo: 0x8000000000000000UL })
-  assert_u128_eq(shift_right_jam128(a, 63), { hi: 0UL, lo: 2UL })
-  assert_u128_eq(shift_right_jam128(a, 64), { hi: 0UL, lo: 1UL })
-  assert_u128_eq(shift_right_jam128(a, 65), { hi: 0UL, lo: 1UL })
-  assert_u128_eq(shift_right_jam128(a, 129), { hi: 0UL, lo: 1UL })
+  assert_u128_eq(shift_right_jam128(a, 1), {
+    hi: 0UL,
+    lo: 0x8000000000000000UL,
+  })
+  assert_u128_eq(shift_right_jam128(a, 63), { hi: 0UL, lo: 2UL, })
+  assert_u128_eq(shift_right_jam128(a, 64), { hi: 0UL, lo: 1UL, })
+  assert_u128_eq(shift_right_jam128(a, 65), { hi: 0UL, lo: 1UL, })
+  assert_u128_eq(shift_right_jam128(a, 129), { hi: 0UL, lo: 1UL, })
   assert_u128_eq(shift_right_jam128(uint128_zero(), 129), uint128_zero())
 
   let extra = shift_right_jam64_extra(1UL, 0UL, 1)
@@ -66,12 +69,12 @@ test "jam shifts cover boundary distances" {
 ///|
 test "uint128 compare add sub shift and negation helpers" {
   let zero = uint128_zero()
-  let one = { hi: 0UL, lo: 1UL }
-  let high = { hi: 1UL, lo: 0UL }
+  let one = { hi: 0UL, lo: 1UL, }
+  let high = { hi: 1UL, lo: 0UL, }
 
-  let carry = add128({ hi: 2UL, lo: 0xFFFFFFFFFFFFFFFFUL }, one)
-  assert_u128_eq(carry, { hi: 3UL, lo: 0UL })
-  assert_u128_eq(sub128(carry, one), { hi: 2UL, lo: 0xFFFFFFFFFFFFFFFFUL })
+  let carry = add128({ hi: 2UL, lo: 0xFFFFFFFFFFFFFFFFUL, }, one)
+  assert_u128_eq(carry, { hi: 3UL, lo: 0UL, })
+  assert_u128_eq(sub128(carry, one), { hi: 2UL, lo: 0xFFFFFFFFFFFFFFFFUL, })
   assert_u128_eq(neg128(one), {
     hi: 0xFFFFFFFFFFFFFFFFUL,
     lo: 0xFFFFFFFFFFFFFFFFUL,
@@ -82,7 +85,7 @@ test "uint128 compare add sub shift and negation helpers" {
     lo: 0x8000000000000000UL,
   })
   assert_u128_eq(shift_left128_m(one, 64), high)
-  assert_u128_eq(shift_left128_m(one, 65), { hi: 2UL, lo: 0UL })
+  assert_u128_eq(shift_left128_m(one, 65), { hi: 2UL, lo: 0UL, })
   assert_u128_eq(shift_left128_m(one, 129), zero)
 }
 

@@ -29,7 +29,7 @@ fn default_nan_bf16_ui(specialization : Specialization) -> UInt16 {
 
 ///|
 /// Default F32 NaN constants from `source/*/specialize.h`.
-fn default_nan_f32_ui(specialization : Specialization) -> UInt {
+fn default_nan_f32_ui(specialization : Specialization) -> UInt32 {
   match specialization {
     X86_8086SSE => 0xFFC00000U
     RISCV => 0x7FC00000U
@@ -47,7 +47,7 @@ fn default_nan_f64_ui(specialization : Specialization) -> UInt64 {
 
 ///|
 /// Invalid unsigned 32-bit positive-overflow result from `source/*/specialize.h`.
-fn ui32_from_pos_overflow(specialization : Specialization) -> UInt {
+fn ui32_from_pos_overflow(specialization : Specialization) -> UInt32 {
   match specialization {
     X86_8086SSE => 0xFFFFFFFFU
     RISCV => 0xFFFFFFFFU
@@ -56,7 +56,7 @@ fn ui32_from_pos_overflow(specialization : Specialization) -> UInt {
 
 ///|
 /// Invalid unsigned 32-bit negative-overflow result from `source/*/specialize.h`.
-fn ui32_from_neg_overflow(specialization : Specialization) -> UInt {
+fn ui32_from_neg_overflow(specialization : Specialization) -> UInt32 {
   match specialization {
     X86_8086SSE => 0xFFFFFFFFU
     RISCV => 0U
@@ -65,7 +65,7 @@ fn ui32_from_neg_overflow(specialization : Specialization) -> UInt {
 
 ///|
 /// Invalid unsigned 32-bit NaN result from `source/*/specialize.h`.
-fn ui32_from_nan(specialization : Specialization) -> UInt {
+fn ui32_from_nan(specialization : Specialization) -> UInt32 {
   match specialization {
     X86_8086SSE => 0xFFFFFFFFU
     RISCV => 0xFFFFFFFFU
@@ -74,7 +74,7 @@ fn ui32_from_nan(specialization : Specialization) -> UInt {
 
 ///|
 /// Invalid signed 32-bit positive-overflow result from `source/*/specialize.h`.
-fn i32_from_pos_overflow(specialization : Specialization) -> Int {
+fn i32_from_pos_overflow(specialization : Specialization) -> Int32 {
   match specialization {
     X86_8086SSE => -0x7FFFFFFF - 1
     RISCV => 0x7FFFFFFF
@@ -83,13 +83,13 @@ fn i32_from_pos_overflow(specialization : Specialization) -> Int {
 
 ///|
 /// Invalid signed 32-bit negative-overflow result from `source/*/specialize.h`.
-fn i32_from_neg_overflow(_specialization : Specialization) -> Int {
+fn i32_from_neg_overflow(_specialization : Specialization) -> Int32 {
   -0x7FFFFFFF - 1
 }
 
 ///|
 /// Invalid signed 32-bit NaN result from `source/*/specialize.h`.
-fn i32_from_nan(specialization : Specialization) -> Int {
+fn i32_from_nan(specialization : Specialization) -> Int32 {
   match specialization {
     X86_8086SSE => -0x7FFFFFFF - 1
     RISCV => 0x7FFFFFFF
@@ -155,7 +155,7 @@ fn is_sig_nan_bf16_ui(bits : UInt16) -> Bool {
 
 ///|
 /// Ports `softfloat_isSigNaNF32UI` from the selected SoftFloat specializations.
-fn is_sig_nan_f32_ui(bits : UInt) -> Bool {
+fn is_sig_nan_f32_ui(bits : UInt32) -> Bool {
   (bits & 0x7FC00000U) == 0x7F800000U && (bits & 0x003FFFFFU) != 0U
 }
 
@@ -220,10 +220,10 @@ fn f16_ui_to_common_nan(
   }
   let value = match context.specialization {
     X86_8086SSE =>
-      { sign: sign_f16_ui(bits), v64: bits.to_uint64() << 54, v0: 0UL }
-    RISCV => { sign: false, v64: 0UL, v0: 0UL }
+      { sign: sign_f16_ui(bits), v64: bits.to_uint64() << 54, v0: 0UL, }
+    RISCV => { sign: false, v64: 0UL, v0: 0UL, }
   }
-  { value, context }
+  { value, context, }
 }
 
 ///|
@@ -242,10 +242,10 @@ fn bf16_ui_to_common_nan(
   }
   let value = match context.specialization {
     X86_8086SSE =>
-      { sign: sign_bf16_ui(bits), v64: bits.to_uint64() << 56, v0: 0UL }
-    RISCV => { sign: false, v64: 0UL, v0: 0UL }
+      { sign: sign_bf16_ui(bits), v64: bits.to_uint64() << 56, v0: 0UL, }
+    RISCV => { sign: false, v64: 0UL, v0: 0UL, }
   }
-  { value, context }
+  { value, context, }
 }
 
 ///|
@@ -255,7 +255,7 @@ fn bf16_ui_to_common_nan(
 /// invalid flag side effect matters and common-NaN payload storage is unused.
 fn f32_ui_to_common_nan(
   context : Context,
-  bits : UInt,
+  bits : UInt32,
 ) -> SoftResult[CommonNaN] {
   let context = if is_sig_nan_f32_ui(bits) {
     context.raise_flags(ExceptionFlags::invalid())
@@ -264,10 +264,10 @@ fn f32_ui_to_common_nan(
   }
   let value = match context.specialization {
     X86_8086SSE =>
-      { sign: sign_f32_ui(bits), v64: bits.to_uint64() << 41, v0: 0UL }
-    RISCV => { sign: false, v64: 0UL, v0: 0UL }
+      { sign: sign_f32_ui(bits), v64: bits.to_uint64() << 41, v0: 0UL, }
+    RISCV => { sign: false, v64: 0UL, v0: 0UL, }
   }
-  { value, context }
+  { value, context, }
 }
 
 ///|
@@ -285,10 +285,10 @@ fn f64_ui_to_common_nan(
     context
   }
   let value = match context.specialization {
-    X86_8086SSE => { sign: sign_f64_ui(bits), v64: bits << 12, v0: 0UL }
-    RISCV => { sign: false, v64: 0UL, v0: 0UL }
+    X86_8086SSE => { sign: sign_f64_ui(bits), v64: bits << 12, v0: 0UL, }
+    RISCV => { sign: false, v64: 0UL, v0: 0UL, }
   }
-  { value, context }
+  { value, context, }
 }
 
 ///|
@@ -319,7 +319,7 @@ fn common_nan_to_bf16_ui(context : Context, nan : CommonNaN) -> UInt16 {
 
 ///|
 /// Ports `source/8086-SSE/s_commonNaNToF32UI.c` and RISCV's default-NaN macro.
-fn common_nan_to_f32_ui(context : Context, nan : CommonNaN) -> UInt {
+fn common_nan_to_f32_ui(context : Context, nan : CommonNaN) -> UInt32 {
   ignore(nan.v0)
   match context.specialization {
     X86_8086SSE => {
@@ -364,7 +364,7 @@ fn propagate_nan_f16_ui(
       } else {
         (if is_nan_f16_ui(a) { a } else { b }) | 0x0200
       }
-      { value, context }
+      { value, context, }
     }
     RISCV => {
       let context = if is_sig_nan_f16_ui(a) || is_sig_nan_f16_ui(b) {
@@ -372,7 +372,7 @@ fn propagate_nan_f16_ui(
       } else {
         context
       }
-      { value: default_nan_f16_ui(RISCV), context }
+      { value: default_nan_f16_ui(RISCV), context, }
     }
   }
 }
@@ -382,9 +382,9 @@ fn propagate_nan_f16_ui(
 /// `source/RISCV/s_propagateNaNF32UI.c`.
 fn propagate_nan_f32_ui(
   context : Context,
-  a : UInt,
-  b : UInt,
-) -> SoftResult[UInt] {
+  a : UInt32,
+  b : UInt32,
+) -> SoftResult[UInt32] {
   match context.specialization {
     X86_8086SSE => {
       let a_is_sig = is_sig_nan_f32_ui(a)
@@ -398,7 +398,7 @@ fn propagate_nan_f32_ui(
       } else {
         (if is_nan_f32_ui(a) { a } else { b }) | 0x00400000U
       }
-      { value, context }
+      { value, context, }
     }
     RISCV => {
       let context = if is_sig_nan_f32_ui(a) || is_sig_nan_f32_ui(b) {
@@ -406,7 +406,7 @@ fn propagate_nan_f32_ui(
       } else {
         context
       }
-      { value: default_nan_f32_ui(RISCV), context }
+      { value: default_nan_f32_ui(RISCV), context, }
     }
   }
 }
@@ -432,7 +432,7 @@ fn propagate_nan_f64_ui(
       } else {
         (if is_nan_f64_ui(a) { a } else { b }) | 0x0008000000000000UL
       }
-      { value, context }
+      { value, context, }
     }
     RISCV => {
       let context = if is_sig_nan_f64_ui(a) || is_sig_nan_f64_ui(b) {
@@ -440,7 +440,7 @@ fn propagate_nan_f64_ui(
       } else {
         context
       }
-      { value: default_nan_f64_ui(RISCV), context }
+      { value: default_nan_f64_ui(RISCV), context, }
     }
   }
 }

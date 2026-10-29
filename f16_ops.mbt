@@ -19,12 +19,12 @@ pub fn F16::to_f32(self : F16, context : Context) -> SoftResult[F32] {
         context: common.context,
       }
     } else {
-      { value: F32::from_bits(pack_to_f32_ui(sign, 0xFF, 0U)), context }
+      { value: F32::from_bits(pack_to_f32_ui(sign, 0xFF, 0U)), context, }
     }
   } else {
     if exp == 0 {
       if frac == 0 {
-        return { value: F32::from_bits(pack_to_f32_ui(sign, 0, 0U)), context }
+        return { value: F32::from_bits(pack_to_f32_ui(sign, 0, 0U)), context, }
       }
       let norm = norm_subnormal_f16_sig(frac)
       exp = norm.exp - 1
@@ -60,12 +60,12 @@ pub fn F16::to_f64(self : F16, context : Context) -> SoftResult[F64] {
         context: common.context,
       }
     } else {
-      { value: F64::from_bits(pack_to_f64_ui(sign, 0x7FF, 0UL)), context }
+      { value: F64::from_bits(pack_to_f64_ui(sign, 0x7FF, 0UL)), context, }
     }
   } else {
     if exp == 0 {
       if frac == 0 {
-        return { value: F64::from_bits(pack_to_f64_ui(sign, 0, 0UL)), context }
+        return { value: F64::from_bits(pack_to_f64_ui(sign, 0, 0UL)), context, }
       }
       let norm = norm_subnormal_f16_sig(frac)
       exp = norm.exp - 1
@@ -110,7 +110,7 @@ fn f16_invalid_ui32_result(
   context : Context,
   sign : Bool,
   is_nan : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   let value = if is_nan {
     ui32_from_nan(context.specialization)
   } else if sign {
@@ -118,7 +118,7 @@ fn f16_invalid_ui32_result(
   } else {
     ui32_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
@@ -134,7 +134,7 @@ fn f16_invalid_ui64_result(
   } else {
     ui64_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
@@ -142,7 +142,7 @@ fn f16_invalid_i32_result(
   context : Context,
   sign : Bool,
   is_nan : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   let value = if is_nan {
     i32_from_nan(context.specialization)
   } else if sign {
@@ -150,7 +150,7 @@ fn f16_invalid_i32_result(
   } else {
     i32_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
@@ -166,11 +166,11 @@ fn f16_invalid_i64_result(
   } else {
     i64_from_pos_overflow(context.specialization)
   }
-  { value, context: context.raise_flags(ExceptionFlags::invalid()) }
+  { value, context: context.raise_flags(ExceptionFlags::invalid()), }
 }
 
 ///|
-fn f16_integer_fields(a : F16) -> (Bool, Int, UInt) {
+fn f16_integer_fields(a : F16) -> (Bool, Int32, UInt32) {
   let bits = a.to_bits()
   (sign_f16_ui(bits), exp_f16_ui(bits), frac_f16_ui(bits).to_uint())
 }
@@ -187,7 +187,7 @@ pub fn F16::to_ui32(
   context : Context,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   let (sign, exp, frac) = f16_integer_fields(self)
   if exp == 0x1F {
     f16_invalid_ui32_result(context, sign, frac != 0U)
@@ -197,7 +197,7 @@ pub fn F16::to_ui32(
       sig32 = sig32 | 0x0400U
       let shift_dist = exp - 0x19
       if shift_dist >= 0 && !sign {
-        return { value: sig32 << shift_dist, context }
+        return { value: sig32 << shift_dist, context, }
       }
       let shift_dist = exp - 0x0D
       if shift_dist > 0 {
@@ -230,7 +230,7 @@ pub fn F16::to_ui64(
       sig32 = sig32 | 0x0400U
       let shift_dist = exp - 0x19
       if shift_dist >= 0 && !sign {
-        return { value: sig32.to_uint64() << shift_dist, context }
+        return { value: sig32.to_uint64() << shift_dist, context, }
       }
       let shift_dist = exp - 0x0D
       if shift_dist > 0 {
@@ -259,7 +259,7 @@ pub fn F16::to_i32(
   context : Context,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   let (sign, exp, frac) = f16_integer_fields(self)
   if exp == 0x1F {
     f16_invalid_i32_result(context, sign, frac != 0U)
@@ -271,7 +271,7 @@ pub fn F16::to_i32(
       if shift_dist >= 0 {
         sig32 = sig32 << shift_dist
         let magnitude = sig32.reinterpret_as_int()
-        return { value: if sign { -magnitude } else { magnitude }, context }
+        return { value: if sign { -magnitude } else { magnitude }, context, }
       }
       let shift_dist = exp - 0x0D
       if shift_dist > 0 {
@@ -305,7 +305,7 @@ pub fn F16::to_i64(
       if shift_dist >= 0 {
         sig32 = sig32 << shift_dist
         let magnitude = sig32.reinterpret_as_int().to_int64()
-        return { value: if sign { -magnitude } else { magnitude }, context }
+        return { value: if sign { -magnitude } else { magnitude }, context, }
       }
       let shift_dist = exp - 0x0D
       if shift_dist > 0 {
@@ -313,7 +313,7 @@ pub fn F16::to_i64(
       }
     }
     let result = round_to_i32(context, sign, sig32.to_uint64(), rounding, exact)
-    { value: result.value.to_int64(), context: result.context }
+    { value: result.value.to_int64(), context: result.context, }
   }
 }
 
@@ -332,7 +332,7 @@ fn f16_to_ui_min_mag_parts(
     } else {
       context
     }
-    { value: 0UL, context }
+    { value: 0UL, context, }
   } else if sign || exp == 0x1F {
     let invalid = f16_invalid_ui64_result(
       context,
@@ -354,7 +354,7 @@ fn f16_to_ui_min_mag_parts(
     } else {
       context
     }
-    { value: (aligned >> 10).to_uint64(), context }
+    { value: (aligned >> 10).to_uint64(), context, }
   }
 }
 
@@ -369,9 +369,9 @@ pub fn F16::to_ui32_min_mag(
   self : F16,
   context : Context,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   let result = f16_to_ui_min_mag_parts(context, self, exact, false)
-  { value: result.value.to_uint(), context: result.context }
+  { value: result.value.to_uint(), context: result.context, }
 }
 
 ///|
@@ -402,13 +402,13 @@ fn f16_to_i_min_mag_parts(
     } else {
       context
     }
-    { value: 0L, context }
+    { value: 0L, context, }
   } else if exp == 0x1F {
     if wide {
       f16_invalid_i64_result(context, sign, frac != 0U)
     } else {
       let invalid = f16_invalid_i32_result(context, sign, frac != 0U)
-      { value: invalid.value.to_int64(), context: invalid.context }
+      { value: invalid.value.to_int64(), context: invalid.context, }
     }
   } else {
     let aligned = (frac | 0x0400U) << shift_dist
@@ -418,7 +418,7 @@ fn f16_to_i_min_mag_parts(
       context
     }
     let value = (aligned >> 10).reinterpret_as_int().to_int64()
-    { value: if sign { -value } else { value }, context }
+    { value: if sign { -value } else { value }, context, }
   }
 }
 
@@ -432,9 +432,9 @@ pub fn F16::to_i32_min_mag(
   self : F16,
   context : Context,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   let result = f16_to_i_min_mag_parts(context, self, exact, false)
-  { value: result.value.to_int(), context: result.context }
+  { value: result.value.to_int(), context: result.context, }
 }
 
 ///|
@@ -460,7 +460,7 @@ pub fn f16_to_ui32(
   a : F16,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   a.to_ui32(context, rounding, exact)
 }
 
@@ -486,7 +486,7 @@ pub fn f16_to_i32(
   a : F16,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   a.to_i32(context, rounding, exact)
 }
 
@@ -511,7 +511,7 @@ pub fn f16_to_ui32_min_mag(
   context : Context,
   a : F16,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   a.to_ui32_min_mag(context, exact)
 }
 
@@ -535,7 +535,7 @@ pub fn f16_to_i32_min_mag(
   context : Context,
   a : F16,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   a.to_i32_min_mag(context, exact)
 }
 
@@ -569,7 +569,7 @@ pub fn F16::round_to_int(
   let exp = exp_f16_ui(ui_a)
   if exp <= 0x0E {
     if ((ui_a.to_uint() << 1) & 0xFFFFU) == 0U {
-      return { value: self, context }
+      return { value: self, context, }
     }
     let mut context = context
     if exact {
@@ -590,13 +590,13 @@ pub fn F16::round_to_int(
       Odd => ui_z = ui_z | pack_to_f16_ui(false, 0x0F, 0)
       MinMag => ()
     }
-    { value: F16::from_bits(ui_z), context }
+    { value: F16::from_bits(ui_z), context, }
   } else if exp >= 0x19 {
     if exp == 0x1F && frac_f16_ui(ui_a) != 0 {
       let propagated = propagate_nan_f16_ui(context, ui_a, 0)
-      { value: F16::from_bits(propagated.value), context: propagated.context }
+      { value: F16::from_bits(propagated.value), context: propagated.context, }
     } else {
-      { value: self, context }
+      { value: self, context, }
     }
   } else {
     let mut ui_z = ui_a
@@ -623,7 +623,7 @@ pub fn F16::round_to_int(
         context = context.raise_flags(ExceptionFlags::inexact())
       }
     }
-    { value: F16::from_bits(ui_z), context }
+    { value: F16::from_bits(ui_z), context, }
   }
 }
 
@@ -687,7 +687,7 @@ fn f16_propagate_nan_result(
   ui_b : UInt16,
 ) -> SoftResult[F16] {
   let propagated = propagate_nan_f16_ui(context, ui_a, ui_b)
-  { value: F16::from_bits(propagated.value), context: propagated.context }
+  { value: F16::from_bits(propagated.value), context: propagated.context, }
 }
 
 ///|
@@ -699,7 +699,7 @@ fn f16_propagate_nan3_result(
 ) -> SoftResult[F16] {
   let ab = propagate_nan_f16_ui(context, ui_a, ui_b)
   let abc = propagate_nan_f16_ui(ab.context, ab.value, ui_c)
-  { value: F16::from_bits(abc.value), context: abc.context }
+  { value: F16::from_bits(abc.value), context: abc.context, }
 }
 
 ///|
@@ -715,12 +715,12 @@ fn f16_add_mags(
   let exp_diff = exp_a - exp_b
   if exp_diff == 0 {
     if exp_a == 0 {
-      { value: F16::from_bits(ui_a + frac_f16_ui(ui_b)), context }
+      { value: F16::from_bits(ui_a + frac_f16_ui(ui_b)), context, }
     } else if exp_a == 0x1F {
       if (sig_a | sig_b) != 0U {
         f16_propagate_nan_result(context, ui_a, ui_b)
       } else {
-        { value: F16::from_bits(ui_a), context }
+        { value: F16::from_bits(ui_a), context, }
       }
     } else {
       let sign_z = sign_f16_ui(ui_a)
@@ -759,7 +759,7 @@ fn f16_add_mags(
         if exp_a != 0 || sig_a != 0U {
           return f16_add_epsilon(context, ui_z)
         }
-        return { value: F16::from_bits(ui_z), context }
+        return { value: F16::from_bits(ui_z), context, }
       }
       exp_z = exp_b
       sig_x = sig_b | 0x0400U
@@ -771,13 +771,13 @@ fn f16_add_mags(
         if sig_a != 0U {
           return f16_propagate_nan_result(context, ui_a, ui_b)
         }
-        return { value: F16::from_bits(ui_z), context }
+        return { value: F16::from_bits(ui_z), context, }
       }
       if exp_diff >= 13 {
         if exp_b != 0 || sig_b != 0U {
           return f16_add_epsilon(context, ui_z)
         }
-        return { value: F16::from_bits(ui_z), context }
+        return { value: F16::from_bits(ui_z), context, }
       }
       exp_z = exp_a
       sig_x = sig_a | 0x0400U
@@ -878,7 +878,7 @@ fn f16_sub_mags(
         if exp_a != 0 || sig_a != 0U {
           return f16_sub_epsilon(context, ui_z)
         }
-        return { value: F16::from_bits(ui_z), context }
+        return { value: F16::from_bits(ui_z), context, }
       }
       exp_z = exp_a + 19
       sig_x = sig_b | 0x0400U
@@ -890,13 +890,13 @@ fn f16_sub_mags(
         if sig_a != 0U {
           return f16_propagate_nan_result(context, ui_a, ui_b)
         }
-        return { value: F16::from_bits(ui_z), context }
+        return { value: F16::from_bits(ui_z), context, }
       }
       if exp_diff >= 13 {
         if exp_b != 0 || sig_b != 0U {
           return f16_sub_epsilon(context, ui_z)
         }
-        return { value: F16::from_bits(ui_z), context }
+        return { value: F16::from_bits(ui_z), context, }
       }
       exp_z = exp_b + 19
       sig_x = sig_a | 0x0400U
@@ -1010,7 +1010,7 @@ pub fn f16_mul(context : Context, a : F16, b : F16) -> SoftResult[F16] {
         context: context.raise_flags(ExceptionFlags::invalid()),
       }
     }
-    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0x1F, 0)), context }
+    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0x1F, 0)), context, }
   }
   if exp_b == 0x1F {
     if sig_b != 0U {
@@ -1022,11 +1022,11 @@ pub fn f16_mul(context : Context, a : F16, b : F16) -> SoftResult[F16] {
         context: context.raise_flags(ExceptionFlags::invalid()),
       }
     }
-    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0x1F, 0)), context }
+    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0x1F, 0)), context, }
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context }
+      return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context, }
     }
     let norm = norm_subnormal_f16_sig(sig_a.to_uint16())
     exp_a = norm.exp
@@ -1034,7 +1034,7 @@ pub fn f16_mul(context : Context, a : F16, b : F16) -> SoftResult[F16] {
   }
   if exp_b == 0 {
     if sig_b == 0U {
-      return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context }
+      return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context, }
     }
     let norm = norm_subnormal_f16_sig(sig_b.to_uint16())
     exp_b = norm.exp
@@ -1093,13 +1093,13 @@ pub fn f16_div(context : Context, a : F16, b : F16) -> SoftResult[F16] {
         context: context.raise_flags(ExceptionFlags::invalid()),
       }
     }
-    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0x1F, 0)), context }
+    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0x1F, 0)), context, }
   }
   if exp_b == 0x1F {
     if sig_b != 0U {
       return f16_propagate_nan_result(context, ui_a, ui_b)
     }
-    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context }
+    return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context, }
   }
   if exp_b == 0 {
     if sig_b == 0U {
@@ -1120,7 +1120,7 @@ pub fn f16_div(context : Context, a : F16, b : F16) -> SoftResult[F16] {
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context }
+      return { value: F16::from_bits(pack_to_f16_ui(sign_z, 0, 0)), context, }
     }
     let norm = norm_subnormal_f16_sig(sig_a.to_uint16())
     exp_a = norm.exp
@@ -1178,7 +1178,7 @@ pub fn f16_sqrt(context : Context, a : F16) -> SoftResult[F16] {
       return f16_propagate_nan_result(context, ui_a, 0)
     }
     if !sign_a {
-      return { value: a, context }
+      return { value: a, context, }
     }
     return {
       value: F16::from_bits(default_nan_f16_ui(context.specialization)),
@@ -1187,7 +1187,7 @@ pub fn f16_sqrt(context : Context, a : F16) -> SoftResult[F16] {
   }
   if sign_a {
     if exp_a == 0 && sig_a == 0U {
-      return { value: a, context }
+      return { value: a, context, }
     }
     return {
       value: F16::from_bits(default_nan_f16_ui(context.specialization)),
@@ -1196,7 +1196,7 @@ pub fn f16_sqrt(context : Context, a : F16) -> SoftResult[F16] {
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: a, context }
+      return { value: a, context, }
     }
     let norm = norm_subnormal_f16_sig(sig_a.to_uint16())
     exp_a = norm.exp
@@ -1272,7 +1272,7 @@ pub fn f16_rem(context : Context, a : F16, b : F16) -> SoftResult[F16] {
     if sig_b != 0U {
       return f16_propagate_nan_result(context, ui_a, ui_b)
     }
-    return { value: a, context }
+    return { value: a, context, }
   }
   if exp_b == 0 {
     if sig_b == 0U {
@@ -1287,7 +1287,7 @@ pub fn f16_rem(context : Context, a : F16, b : F16) -> SoftResult[F16] {
   }
   if exp_a == 0 {
     if sig_a == 0U {
-      return { value: a, context }
+      return { value: a, context, }
     }
     let norm = norm_subnormal_f16_sig(sig_a.to_uint16())
     exp_a = norm.exp
@@ -1299,7 +1299,7 @@ pub fn f16_rem(context : Context, a : F16, b : F16) -> SoftResult[F16] {
   let mut q = 0U
   if exp_diff < 1 {
     if exp_diff < -1 {
-      return { value: a, context }
+      return { value: a, context, }
     }
     sig_b = sig_b << 3
     if exp_diff != 0 {
@@ -1410,7 +1410,7 @@ pub fn f16_mul_add(
     if sig_c != 0U {
       return f16_propagate_nan_result(context, 0, ui_c)
     }
-    return { value: c, context }
+    return { value: c, context, }
   }
   if exp_a == 0 {
     if sig_a == 0U {
@@ -1510,23 +1510,23 @@ pub fn f16_mul_add(
 fn f16_mul_add_inf_prod(
   context : Context,
   sign_prod : Bool,
-  exp_mag : Int,
-  sig_mag : UInt,
+  exp_mag : Int32,
+  sig_mag : UInt32,
   sign_c : Bool,
-  exp_c : Int,
-  sig_c : UInt,
+  exp_c : Int32,
+  sig_c : UInt32,
   ui_c : UInt16,
 ) -> SoftResult[F16] {
   if exp_mag != 0 || sig_mag != 0U {
     let ui_z = pack_to_f16_ui(sign_prod, 0x1F, 0)
     if exp_c != 0x1F {
-      return { value: F16::from_bits(ui_z), context }
+      return { value: F16::from_bits(ui_z), context, }
     }
     if sig_c != 0U {
       return f16_propagate_nan_result(context, ui_z, ui_c)
     }
     if sign_prod == sign_c {
-      return { value: F16::from_bits(ui_z), context }
+      return { value: F16::from_bits(ui_z), context, }
     }
   }
   let invalid_context = context.raise_flags(ExceptionFlags::invalid())
@@ -1542,8 +1542,8 @@ fn f16_mul_add_zero_prod(
   context : Context,
   sign_prod : Bool,
   sign_c : Bool,
-  exp_c : Int,
-  sig_c : UInt,
+  exp_c : Int32,
+  sig_c : UInt32,
   ui_c : UInt16,
 ) -> SoftResult[F16] {
   if exp_c == 0 && sig_c == 0U && sign_prod != sign_c {
@@ -1552,7 +1552,7 @@ fn f16_mul_add_zero_prod(
       context,
     }
   } else {
-    { value: F16::from_bits(ui_c), context }
+    { value: F16::from_bits(ui_c), context, }
   }
 }
 
@@ -1611,9 +1611,9 @@ pub fn f16_eq(context : Context, a : F16, b : F16) -> SoftResult[Bool] {
   let ui_b = b.to_bits()
   let context = f16_compare_nan_context(context, ui_a, ui_b, true)
   if is_nan_f16_ui(ui_a) || is_nan_f16_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: ui_a == ui_b || f16_both_zero(ui_a, ui_b), context }
+    { value: ui_a == ui_b || f16_both_zero(ui_a, ui_b), context, }
   }
 }
 
@@ -1631,9 +1631,9 @@ pub fn f16_eq_signaling(
   let ui_b = b.to_bits()
   let context = f16_compare_nan_context(context, ui_a, ui_b, false)
   if is_nan_f16_ui(ui_a) || is_nan_f16_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: ui_a == ui_b || f16_both_zero(ui_a, ui_b), context }
+    { value: ui_a == ui_b || f16_both_zero(ui_a, ui_b), context, }
   }
 }
 
@@ -1646,9 +1646,9 @@ pub fn f16_le(context : Context, a : F16, b : F16) -> SoftResult[Bool] {
   let ui_a = a.to_bits()
   let ui_b = b.to_bits()
   if is_nan_f16_ui(ui_a) || is_nan_f16_ui(ui_b) {
-    { value: false, context: context.raise_flags(ExceptionFlags::invalid()) }
+    { value: false, context: context.raise_flags(ExceptionFlags::invalid()), }
   } else {
-    { value: f16_ordered_le(ui_a, ui_b), context }
+    { value: f16_ordered_le(ui_a, ui_b), context, }
   }
 }
 
@@ -1661,9 +1661,9 @@ pub fn f16_lt(context : Context, a : F16, b : F16) -> SoftResult[Bool] {
   let ui_a = a.to_bits()
   let ui_b = b.to_bits()
   if is_nan_f16_ui(ui_a) || is_nan_f16_ui(ui_b) {
-    { value: false, context: context.raise_flags(ExceptionFlags::invalid()) }
+    { value: false, context: context.raise_flags(ExceptionFlags::invalid()), }
   } else {
-    { value: f16_ordered_lt(ui_a, ui_b), context }
+    { value: f16_ordered_lt(ui_a, ui_b), context, }
   }
 }
 
@@ -1677,9 +1677,9 @@ pub fn f16_le_quiet(context : Context, a : F16, b : F16) -> SoftResult[Bool] {
   let ui_b = b.to_bits()
   let context = f16_compare_nan_context(context, ui_a, ui_b, true)
   if is_nan_f16_ui(ui_a) || is_nan_f16_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: f16_ordered_le(ui_a, ui_b), context }
+    { value: f16_ordered_le(ui_a, ui_b), context, }
   }
 }
 
@@ -1693,8 +1693,8 @@ pub fn f16_lt_quiet(context : Context, a : F16, b : F16) -> SoftResult[Bool] {
   let ui_b = b.to_bits()
   let context = f16_compare_nan_context(context, ui_a, ui_b, true)
   if is_nan_f16_ui(ui_a) || is_nan_f16_ui(ui_b) {
-    { value: false, context }
+    { value: false, context, }
   } else {
-    { value: f16_ordered_lt(ui_a, ui_b), context }
+    { value: f16_ordered_lt(ui_a, ui_b), context, }
   }
 }

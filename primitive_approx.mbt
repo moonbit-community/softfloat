@@ -1,6 +1,6 @@
 ///|
 /// Table entry from `softfloat_approxRecip_1k0s` in `s_approxRecip_1Ks.c`.
-fn approx_recip_1k0(index : Int) -> UInt64 {
+fn approx_recip_1k0(index : Int32) -> UInt64 {
   match index {
     0 => 0xFFC4UL
     1 => 0xF0BEUL
@@ -24,7 +24,7 @@ fn approx_recip_1k0(index : Int) -> UInt64 {
 
 ///|
 /// Table entry from `softfloat_approxRecip_1k1s` in `s_approxRecip_1Ks.c`.
-fn approx_recip_1k1(index : Int) -> UInt64 {
+fn approx_recip_1k1(index : Int32) -> UInt64 {
   match index {
     0 => 0xF0F1UL
     1 => 0xD62CUL
@@ -48,7 +48,7 @@ fn approx_recip_1k1(index : Int) -> UInt64 {
 
 ///|
 /// Ports `softfloat_approxRecip32_1` from `s_approxRecip32_1.c`.
-fn approx_recip32_1(a : UInt) -> UInt {
+fn approx_recip32_1(a : UInt32) -> UInt32 {
   let index = ((a >> 27) & 0xFU).reinterpret_as_int()
   let eps = ((a >> 11) & 0xFFFFU).to_uint64()
   let r0 = approx_recip_1k0(index) - ((approx_recip_1k1(index) * eps) >> 20)
@@ -63,7 +63,7 @@ fn approx_recip32_1(a : UInt) -> UInt {
 ///|
 /// Table entry from `softfloat_approxRecipSqrt_1k0s` in
 /// `s_approxRecipSqrt_1Ks.c`.
-fn approx_recip_sqrt_1k0(index : Int) -> UInt64 {
+fn approx_recip_sqrt_1k0(index : Int32) -> UInt64 {
   match index {
     0 => 0xB4C9UL
     1 => 0xFFABUL
@@ -88,7 +88,7 @@ fn approx_recip_sqrt_1k0(index : Int) -> UInt64 {
 ///|
 /// Table entry from `softfloat_approxRecipSqrt_1k1s` in
 /// `s_approxRecipSqrt_1Ks.c`.
-fn approx_recip_sqrt_1k1(index : Int) -> UInt64 {
+fn approx_recip_sqrt_1k1(index : Int32) -> UInt64 {
   match index {
     0 => 0xA5A5UL
     1 => 0xEA42UL
@@ -113,7 +113,7 @@ fn approx_recip_sqrt_1k1(index : Int) -> UInt64 {
 ///|
 /// Ports `softfloat_approxRecipSqrt32_1` from
 /// `s_approxRecipSqrt32_1.c`.
-fn approx_recip_sqrt32_1(odd_exp_a : Bool, a : UInt) -> UInt {
+fn approx_recip_sqrt32_1(odd_exp_a : Bool, a : UInt32) -> UInt32 {
   let index = ((a >> 27) & 0xEU).reinterpret_as_int() +
     (if odd_exp_a { 1 } else { 0 })
   let eps = ((a >> 12) & 0xFFFFU).to_uint64()

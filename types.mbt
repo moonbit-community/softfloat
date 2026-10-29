@@ -56,14 +56,14 @@ pub fn BF16::to_bits(self : BF16) -> UInt16 {
 /// The stored value is the raw 32-bit payload. Native `Float` bridges only
 /// reinterpret bits and are not used to compute SoftFloat results. All
 /// binary32 encodings are accepted, including noncanonical NaN payloads.
-pub struct F32(UInt)
+pub struct F32(UInt32)
 
 ///|
 /// Creates an `F32` from its raw IEEE 754 binary32 bits.
 ///
 /// The payload is stored unchanged. This constructor does not raise flags and
 /// does not canonicalize signaling NaNs.
-pub fn F32::from_bits(bits : UInt) -> F32 {
+pub fn F32::from_bits(bits : UInt32) -> F32 {
   F32(bits)
 }
 
@@ -71,7 +71,7 @@ pub fn F32::from_bits(bits : UInt) -> F32 {
 /// Returns the raw IEEE 754 binary32 bits stored in this value.
 ///
 /// The result preserves signs of zero and NaN payload bits exactly.
-pub fn F32::to_bits(self : F32) -> UInt {
+pub fn F32::to_bits(self : F32) -> UInt32 {
   self.0
 }
 

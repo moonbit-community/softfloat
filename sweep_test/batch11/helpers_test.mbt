@@ -11,7 +11,7 @@ pub fn sweep_lcg_next(state : UInt64) -> UInt64 {
 }
 
 ///|
-pub fn sweep_rounding4(index : Int) -> @sf.RoundingMode {
+pub fn sweep_rounding4(index : Int32) -> @sf.RoundingMode {
   match index {
     0 => @sf.RoundingMode::NearEven
     1 => @sf.RoundingMode::Min
@@ -21,7 +21,7 @@ pub fn sweep_rounding4(index : Int) -> @sf.RoundingMode {
 }
 
 ///|
-pub fn sweep_rounding6(index : Int) -> @sf.RoundingMode {
+pub fn sweep_rounding6(index : Int32) -> @sf.RoundingMode {
   match index {
     0 => @sf.RoundingMode::NearEven
     1 => @sf.RoundingMode::MinMag
@@ -33,7 +33,7 @@ pub fn sweep_rounding6(index : Int) -> @sf.RoundingMode {
 }
 
 ///|
-pub fn sweep_tininess(index : Int) -> @sf.TininessMode {
+pub fn sweep_tininess(index : Int32) -> @sf.TininessMode {
   if index == 0 {
     @sf.TininessMode::AfterRounding
   } else {
@@ -43,7 +43,7 @@ pub fn sweep_tininess(index : Int) -> @sf.TininessMode {
 
 ///|
 pub fn sweep_context(
-  spec : Int,
+  spec : Int32,
   rounding : @sf.RoundingMode,
   tininess : @sf.TininessMode,
 ) -> @sf.Context {
@@ -56,7 +56,7 @@ pub fn sweep_context(
 }
 
 ///|
-pub fn sweep_edge_f16(index : Int) -> UInt16 {
+pub fn sweep_edge_f16(index : Int32) -> UInt16 {
   match index {
     0 => 0x0000
     1 => 0x8000
@@ -81,7 +81,7 @@ pub fn sweep_edge_f16(index : Int) -> UInt16 {
 }
 
 ///|
-pub fn sweep_edge_f32(index : Int) -> UInt {
+pub fn sweep_edge_f32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x80000000U
@@ -106,7 +106,7 @@ pub fn sweep_edge_f32(index : Int) -> UInt {
 }
 
 ///|
-pub fn sweep_edge_f64(index : Int) -> UInt64 {
+pub fn sweep_edge_f64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x8000000000000000UL
@@ -131,7 +131,7 @@ pub fn sweep_edge_f64(index : Int) -> UInt64 {
 }
 
 ///|
-pub fn sweep_edge_ui32(index : Int) -> UInt {
+pub fn sweep_edge_ui32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x00000001U
@@ -145,7 +145,7 @@ pub fn sweep_edge_ui32(index : Int) -> UInt {
 }
 
 ///|
-pub fn sweep_edge_i32(index : Int) -> UInt {
+pub fn sweep_edge_i32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x00000001U
@@ -158,7 +158,7 @@ pub fn sweep_edge_i32(index : Int) -> UInt {
 }
 
 ///|
-pub fn sweep_edge_ui64(index : Int) -> UInt64 {
+pub fn sweep_edge_ui64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x0000000000000001UL
@@ -172,7 +172,7 @@ pub fn sweep_edge_ui64(index : Int) -> UInt64 {
 }
 
 ///|
-pub fn sweep_edge_i64(index : Int) -> UInt64 {
+pub fn sweep_edge_i64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x0000000000000001UL
@@ -186,8 +186,8 @@ pub fn sweep_edge_i64(index : Int) -> UInt64 {
 
 ///|
 fn sweep_digest_random_f32_f32_add_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xFB2A8FA55F9D97DCUL
@@ -199,9 +199,9 @@ fn sweep_digest_random_f32_f32_add_riscv_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_add(
       context,
       @sf.F32::from_bits(a_bits),
@@ -215,8 +215,8 @@ fn sweep_digest_random_f32_f32_add_riscv_range(
 
 ///|
 fn sweep_digest_random_f32_f32_add_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x117F8E8E69A17A7CUL
@@ -228,9 +228,9 @@ fn sweep_digest_random_f32_f32_add_x86_8086_sse_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_add(
       context,
       @sf.F32::from_bits(a_bits),
@@ -244,8 +244,8 @@ fn sweep_digest_random_f32_f32_add_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f32_f32_div_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x1089B9A0AAF58DBCUL
@@ -257,9 +257,9 @@ fn sweep_digest_random_f32_f32_div_riscv_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_div(
       context,
       @sf.F32::from_bits(a_bits),
@@ -273,8 +273,8 @@ fn sweep_digest_random_f32_f32_div_riscv_range(
 
 ///|
 fn sweep_digest_random_f32_f32_div_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x66A045843D44E05CUL
@@ -286,9 +286,9 @@ fn sweep_digest_random_f32_f32_div_x86_8086_sse_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_div(
       context,
       @sf.F32::from_bits(a_bits),
@@ -302,8 +302,8 @@ fn sweep_digest_random_f32_f32_div_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f32_f32_mul_add_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x9AFF140EC157A70CUL
@@ -315,11 +315,11 @@ fn sweep_digest_random_f32_f32_mul_add_riscv_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let c_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let c_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_mul_add(
       context,
       @sf.F32::from_bits(a_bits),
@@ -334,8 +334,8 @@ fn sweep_digest_random_f32_f32_mul_add_riscv_range(
 
 ///|
 fn sweep_digest_random_f32_f32_mul_add_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x74D28868E5EA61ACUL
@@ -347,11 +347,11 @@ fn sweep_digest_random_f32_f32_mul_add_x86_8086_sse_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let c_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let c_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_mul_add(
       context,
       @sf.F32::from_bits(a_bits),
@@ -366,8 +366,8 @@ fn sweep_digest_random_f32_f32_mul_add_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f32_f32_mul_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x191CB75E9254C11CUL
@@ -379,9 +379,9 @@ fn sweep_digest_random_f32_f32_mul_riscv_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_mul(
       context,
       @sf.F32::from_bits(a_bits),
@@ -395,8 +395,8 @@ fn sweep_digest_random_f32_f32_mul_riscv_range(
 
 ///|
 fn sweep_digest_random_f32_f32_mul_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xC8B4BD3F5CB843BCUL
@@ -408,9 +408,9 @@ fn sweep_digest_random_f32_f32_mul_x86_8086_sse_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_mul(
       context,
       @sf.F32::from_bits(a_bits),
@@ -424,8 +424,8 @@ fn sweep_digest_random_f32_f32_mul_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f32_f32_rem_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x1DAA6BC6C14F2A5CUL
@@ -437,9 +437,9 @@ fn sweep_digest_random_f32_f32_rem_riscv_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_rem(
       context,
       @sf.F32::from_bits(a_bits),
@@ -453,8 +453,8 @@ fn sweep_digest_random_f32_f32_rem_riscv_range(
 
 ///|
 fn sweep_digest_random_f32_f32_rem_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xB21DCBF550B24CFCUL
@@ -466,9 +466,9 @@ fn sweep_digest_random_f32_f32_rem_x86_8086_sse_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_rem(
       context,
       @sf.F32::from_bits(a_bits),
@@ -482,8 +482,8 @@ fn sweep_digest_random_f32_f32_rem_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f32_f32_sub_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xCE06C6119BC4C47CUL
@@ -495,9 +495,9 @@ fn sweep_digest_random_f32_f32_sub_riscv_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_sub(
       context,
       @sf.F32::from_bits(a_bits),
@@ -511,8 +511,8 @@ fn sweep_digest_random_f32_f32_sub_riscv_range(
 
 ///|
 fn sweep_digest_random_f32_f32_sub_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xFCD3AA2A9F64771CUL
@@ -524,9 +524,9 @@ fn sweep_digest_random_f32_f32_sub_x86_8086_sse_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_sub(
       context,
       @sf.F32::from_bits(a_bits),
@@ -540,8 +540,8 @@ fn sweep_digest_random_f32_f32_sub_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f32_f32_to_bf16_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x34F44F019C70A4ECUL
@@ -553,7 +553,7 @@ fn sweep_digest_random_f32_f32_to_bf16_riscv_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_to_bf16(context, @sf.F32::from_bits(a_bits))
     hash = sweep_mix(hash, result.value.to_bits().to_uint64())
     hash = sweep_mix(hash, result.context.flags.to_bits().to_uint64())
@@ -563,8 +563,8 @@ fn sweep_digest_random_f32_f32_to_bf16_riscv_range(
 
 ///|
 fn sweep_digest_random_f32_f32_to_bf16_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xB25C2F3BFBB2CF8CUL
@@ -576,7 +576,7 @@ fn sweep_digest_random_f32_f32_to_bf16_x86_8086_sse_range(
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = @sf.f32_to_bf16(context, @sf.F32::from_bits(a_bits))
     hash = sweep_mix(hash, result.value.to_bits().to_uint64())
     hash = sweep_mix(hash, result.context.flags.to_bits().to_uint64())
@@ -586,8 +586,8 @@ fn sweep_digest_random_f32_f32_to_bf16_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f64_f64_add_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xD67530A4250996FCUL
@@ -615,8 +615,8 @@ fn sweep_digest_random_f64_f64_add_riscv_range(
 
 ///|
 fn sweep_digest_random_f64_f64_add_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x3A463CDD1AA8899CUL
@@ -644,8 +644,8 @@ fn sweep_digest_random_f64_f64_add_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f64_f64_div_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0x8ABB49FE090DBCDCUL
@@ -673,8 +673,8 @@ fn sweep_digest_random_f64_f64_div_riscv_range(
 
 ///|
 fn sweep_digest_random_f64_f64_div_x86_8086_sse_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xAEFA3FB0B0501F7CUL
@@ -702,8 +702,8 @@ fn sweep_digest_random_f64_f64_div_x86_8086_sse_range(
 
 ///|
 fn sweep_digest_random_f64_f64_mul_add_riscv_range(
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> UInt64 {
   let mut hash = 0xCBF29CE484222325UL
   let mut rng = 0xD3BD1BD1033A3BFCUL

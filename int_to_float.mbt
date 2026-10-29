@@ -1,5 +1,5 @@
 ///|
-fn abs_i32_bits(a : Int) -> (Bool, UInt) {
+fn abs_i32_bits(a : Int32) -> (Bool, UInt32) {
   let sign = a < 0
   let bits = a.reinterpret_as_uint()
   (sign, if sign { 0U - bits } else { bits })
@@ -16,7 +16,7 @@ fn abs_i64_bits(a : Int64) -> (Bool, UInt64) {
 fn int32_magnitude_to_f16(
   context : Context,
   sign : Bool,
-  abs_a : UInt,
+  abs_a : UInt32,
 ) -> SoftResult[F16] {
   let mut shift_dist = count_leading_zeros32(abs_a) - 21
   if shift_dist >= 0 {
@@ -86,7 +86,7 @@ fn int64_magnitude_to_f16(
 /// Large inputs may overflow to infinity or the largest finite F16 according
 /// to `context.rounding`, raising `Overflow | Inexact`. This conversion never
 /// raises `Invalid`.
-pub fn ui32_to_f16(context : Context, a : UInt) -> SoftResult[F16] {
+pub fn ui32_to_f16(context : Context, a : UInt32) -> SoftResult[F16] {
   int32_magnitude_to_f16(context, false, a)
 }
 
@@ -97,7 +97,7 @@ pub fn ui32_to_f16(context : Context, a : UInt) -> SoftResult[F16] {
 /// without taking a host `abs`. Nonrepresentable magnitudes round according to
 /// the context and may raise `Inexact` or `Overflow | Inexact`, but never
 /// `Invalid`.
-pub fn i32_to_f16(context : Context, a : Int) -> SoftResult[F16] {
+pub fn i32_to_f16(context : Context, a : Int32) -> SoftResult[F16] {
   let (sign, abs_a) = abs_i32_bits(a)
   int32_magnitude_to_f16(context, sign, abs_a)
 }
@@ -130,9 +130,9 @@ pub fn i64_to_f16(context : Context, a : Int64) -> SoftResult[F16] {
 /// Zero converts exactly to positive zero. Values with more precision than
 /// binary32 can store are rounded according to `context.rounding` and may raise
 /// `Inexact`; the UInt32 range never overflows F32.
-pub fn ui32_to_f32(context : Context, a : UInt) -> SoftResult[F32] {
+pub fn ui32_to_f32(context : Context, a : UInt32) -> SoftResult[F32] {
   if a == 0U {
-    { value: F32::from_bits(0U), context }
+    { value: F32::from_bits(0U), context, }
   } else if (a & 0x80000000U) != 0U {
     round_pack_to_f32(context, false, 0x9D, (a >> 1) | (a & 1U))
   } else {
@@ -145,7 +145,7 @@ pub fn ui32_to_f32(context : Context, a : UInt) -> SoftResult[F32] {
 ///
 /// The minimum `Int` is converted by bit magnitude rather than host absolute
 /// value. All results are finite; only precision loss can raise `Inexact`.
-pub fn i32_to_f32(context : Context, a : Int) -> SoftResult[F32] {
+pub fn i32_to_f32(context : Context, a : Int32) -> SoftResult[F32] {
   let sign = a < 0
   let bits = a.reinterpret_as_uint()
   if (bits & 0x7FFFFFFFU) == 0U {
@@ -233,9 +233,9 @@ pub fn i64_to_f32(context : Context, a : Int64) -> SoftResult[F32] {
 ///
 /// Every UInt32 value is exactly representable in binary64, so the returned
 /// context is unchanged.
-pub fn ui32_to_f64(context : Context, a : UInt) -> SoftResult[F64] {
+pub fn ui32_to_f64(context : Context, a : UInt32) -> SoftResult[F64] {
   if a == 0U {
-    { value: F64::from_bits(0UL), context }
+    { value: F64::from_bits(0UL), context, }
   } else {
     let shift_dist = count_leading_zeros32(a) + 21
     {
@@ -252,9 +252,9 @@ pub fn ui32_to_f64(context : Context, a : UInt) -> SoftResult[F64] {
 ///
 /// Every Int32 value, including the minimum value, is exactly representable in
 /// binary64. The result is finite and raises no flags.
-pub fn i32_to_f64(context : Context, a : Int) -> SoftResult[F64] {
+pub fn i32_to_f64(context : Context, a : Int32) -> SoftResult[F64] {
   if a == 0 {
-    { value: F64::from_bits(0UL), context }
+    { value: F64::from_bits(0UL), context, }
   } else {
     let (sign, abs_a) = abs_i32_bits(a)
     let shift_dist = count_leading_zeros32(abs_a) + 21
@@ -279,7 +279,7 @@ pub fn i32_to_f64(context : Context, a : Int) -> SoftResult[F64] {
 /// inputs never overflow F64.
 pub fn ui64_to_f64(context : Context, a : UInt64) -> SoftResult[F64] {
   if a == 0UL {
-    { value: F64::from_bits(0UL), context }
+    { value: F64::from_bits(0UL), context, }
   } else if (a & 0x8000000000000000UL) != 0UL {
     round_pack_to_f64(context, false, 0x43D, short_shift_right_jam64(a, 1))
   } else {
