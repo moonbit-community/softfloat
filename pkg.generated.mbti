@@ -299,6 +299,8 @@ pub(all) enum RoundingMode {
   NearMaxMag
   Odd
 } derive(Eq)
+pub fn RoundingMode::equal(Self, Self) -> Bool
+pub fn RoundingMode::not_equal(Self, Self) -> Bool
 
 pub(all) struct SoftResult[T] {
   value : T
@@ -309,11 +311,15 @@ pub(all) enum Specialization {
   X86_8086SSE
   RISCV
 } derive(Eq)
+pub fn Specialization::equal(Self, Self) -> Bool
+pub fn Specialization::not_equal(Self, Self) -> Bool
 
 pub(all) enum TininessMode {
   BeforeRounding
   AfterRounding
 } derive(Eq)
+pub fn TininessMode::equal(Self, Self) -> Bool
+pub fn TininessMode::not_equal(Self, Self) -> Bool
 
 // Type aliases
 
