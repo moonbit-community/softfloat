@@ -11,7 +11,7 @@ fn sweep_lcg_next(state : UInt64) -> UInt64 {
 }
 
 ///|
-fn sweep_rounding4(index : Int) -> RoundingMode {
+fn sweep_rounding4(index : Int32) -> RoundingMode {
   match index {
     0 => NearEven
     1 => Min
@@ -21,7 +21,7 @@ fn sweep_rounding4(index : Int) -> RoundingMode {
 }
 
 ///|
-fn sweep_rounding6(index : Int) -> RoundingMode {
+fn sweep_rounding6(index : Int32) -> RoundingMode {
   match index {
     0 => NearEven
     1 => MinMag
@@ -33,7 +33,7 @@ fn sweep_rounding6(index : Int) -> RoundingMode {
 }
 
 ///|
-fn sweep_tininess(index : Int) -> TininessMode {
+fn sweep_tininess(index : Int32) -> TininessMode {
   if index == 0 {
     AfterRounding
   } else {
@@ -43,7 +43,7 @@ fn sweep_tininess(index : Int) -> TininessMode {
 
 ///|
 fn sweep_context(
-  spec : Int,
+  spec : Int32,
   rounding : RoundingMode,
   tininess : TininessMode,
 ) -> Context {
@@ -52,7 +52,7 @@ fn sweep_context(
 }
 
 ///|
-fn sweep_edge_f16(index : Int) -> UInt16 {
+fn sweep_edge_f16(index : Int32) -> UInt16 {
   match index {
     0 => 0x0000
     1 => 0x8000
@@ -77,7 +77,7 @@ fn sweep_edge_f16(index : Int) -> UInt16 {
 }
 
 ///|
-fn sweep_edge_f32(index : Int) -> UInt {
+fn sweep_edge_f32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x80000000U
@@ -102,7 +102,7 @@ fn sweep_edge_f32(index : Int) -> UInt {
 }
 
 ///|
-fn sweep_edge_f64(index : Int) -> UInt64 {
+fn sweep_edge_f64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x8000000000000000UL
@@ -127,7 +127,7 @@ fn sweep_edge_f64(index : Int) -> UInt64 {
 }
 
 ///|
-fn sweep_edge_ui32(index : Int) -> UInt {
+fn sweep_edge_ui32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x00000001U
@@ -141,7 +141,7 @@ fn sweep_edge_ui32(index : Int) -> UInt {
 }
 
 ///|
-fn sweep_edge_i32(index : Int) -> UInt {
+fn sweep_edge_i32(index : Int32) -> UInt32 {
   match index {
     0 => 0x00000000U
     1 => 0x00000001U
@@ -154,7 +154,7 @@ fn sweep_edge_i32(index : Int) -> UInt {
 }
 
 ///|
-fn sweep_edge_ui64(index : Int) -> UInt64 {
+fn sweep_edge_ui64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x0000000000000001UL
@@ -168,7 +168,7 @@ fn sweep_edge_ui64(index : Int) -> UInt64 {
 }
 
 ///|
-fn sweep_edge_i64(index : Int) -> UInt64 {
+fn sweep_edge_i64(index : Int32) -> UInt64 {
   match index {
     0 => 0x0000000000000000UL
     1 => 0x0000000000000001UL
@@ -3797,9 +3797,9 @@ fn sweep_digest_random_f32_f32_add_x86_8086_sse() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_add(
       context,
       F32::from_bits(a_bits),
@@ -3828,9 +3828,9 @@ fn sweep_digest_random_f32_f32_sub_x86_8086_sse() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_sub(
       context,
       F32::from_bits(a_bits),
@@ -3859,9 +3859,9 @@ fn sweep_digest_random_f32_f32_mul_x86_8086_sse() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_mul(
       context,
       F32::from_bits(a_bits),
@@ -3890,9 +3890,9 @@ fn sweep_digest_random_f32_f32_div_x86_8086_sse() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_div(
       context,
       F32::from_bits(a_bits),
@@ -3921,9 +3921,9 @@ fn sweep_digest_random_f32_f32_rem_x86_8086_sse() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_rem(
       context,
       F32::from_bits(a_bits),
@@ -4141,11 +4141,11 @@ fn sweep_digest_random_f32_f32_mul_add_x86_8086_sse() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let c_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let c_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_mul_add(
       context,
       F32::from_bits(a_bits),
@@ -4209,7 +4209,7 @@ fn sweep_digest_random_f32_f32_to_bf16_x86_8086_sse() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(0, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_to_bf16(context, F32::from_bits(a_bits))
     hash = sweep_mix(hash, result.value.to_bits().to_uint64())
     hash = sweep_mix(hash, result.context.flags.to_bits().to_uint64())
@@ -4389,9 +4389,9 @@ fn sweep_digest_random_f32_f32_add_riscv() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_add(
       context,
       F32::from_bits(a_bits),
@@ -4420,9 +4420,9 @@ fn sweep_digest_random_f32_f32_sub_riscv() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_sub(
       context,
       F32::from_bits(a_bits),
@@ -4451,9 +4451,9 @@ fn sweep_digest_random_f32_f32_mul_riscv() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_mul(
       context,
       F32::from_bits(a_bits),
@@ -4482,9 +4482,9 @@ fn sweep_digest_random_f32_f32_div_riscv() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_div(
       context,
       F32::from_bits(a_bits),
@@ -4513,9 +4513,9 @@ fn sweep_digest_random_f32_f32_rem_riscv() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_rem(
       context,
       F32::from_bits(a_bits),
@@ -4733,11 +4733,11 @@ fn sweep_digest_random_f32_f32_mul_add_riscv() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let b_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let b_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     rng = sweep_lcg_next(rng)
-    let c_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let c_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_mul_add(
       context,
       F32::from_bits(a_bits),
@@ -4801,7 +4801,7 @@ fn sweep_digest_random_f32_f32_to_bf16_riscv() -> UInt64 {
     let tininess = sweep_tininess(index / 4 % 2)
     let context = sweep_context(1, rounding, tininess)
     rng = sweep_lcg_next(rng)
-    let a_bits : UInt = (rng & 0xFFFFFFFFUL).to_uint()
+    let a_bits : UInt32 = (rng & 0xFFFFFFFFUL).to_uint()
     let result = f32_to_bf16(context, F32::from_bits(a_bits))
     hash = sweep_mix(hash, result.value.to_bits().to_uint64())
     hash = sweep_mix(hash, result.context.flags.to_bits().to_uint64())

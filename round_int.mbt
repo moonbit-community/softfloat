@@ -13,13 +13,13 @@ fn round_invalid_context(context : Context) -> Context {
 }
 
 ///|
-fn round_to_ui32_invalid(context : Context, sign : Bool) -> SoftResult[UInt] {
+fn round_to_ui32_invalid(context : Context, sign : Bool) -> SoftResult[UInt32] {
   let value = if sign {
     ui32_from_neg_overflow(context.specialization)
   } else {
     ui32_from_pos_overflow(context.specialization)
   }
-  { value, context: round_invalid_context(context) }
+  { value, context: round_invalid_context(context), }
 }
 
 ///|
@@ -30,7 +30,7 @@ fn round_to_ui32(
   sig : UInt64,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[UInt] {
+) -> SoftResult[UInt32] {
   let round_increment = match rounding {
     NearEven | NearMaxMag => 0x800UL
     Max if !sign => 0xFFFUL
@@ -54,9 +54,9 @@ fn round_to_ui32(
         if rounding == Odd {
           value = value | 1U
         }
-        { value, context: round_inexact_context(context, exact) }
+        { value, context: round_inexact_context(context, exact), }
       } else {
-        { value, context }
+        { value, context, }
       }
     }
   }
@@ -69,7 +69,7 @@ fn round_to_ui64_invalid(context : Context, sign : Bool) -> SoftResult[UInt64] {
   } else {
     ui64_from_pos_overflow(context.specialization)
   }
-  { value, context: round_invalid_context(context) }
+  { value, context: round_invalid_context(context), }
 }
 
 ///|
@@ -104,22 +104,22 @@ fn round_to_ui64(
         if rounding == Odd {
           value = value | 1UL
         }
-        { value, context: round_inexact_context(context, exact) }
+        { value, context: round_inexact_context(context, exact), }
       } else {
-        { value, context }
+        { value, context, }
       }
     }
   }
 }
 
 ///|
-fn round_to_i32_invalid(context : Context, sign : Bool) -> SoftResult[Int] {
+fn round_to_i32_invalid(context : Context, sign : Bool) -> SoftResult[Int32] {
   let value = if sign {
     i32_from_neg_overflow(context.specialization)
   } else {
     i32_from_pos_overflow(context.specialization)
   }
-  { value, context: round_invalid_context(context) }
+  { value, context: round_invalid_context(context), }
 }
 
 ///|
@@ -130,7 +130,7 @@ fn round_to_i32(
   sig : UInt64,
   rounding : RoundingMode,
   exact : Bool,
-) -> SoftResult[Int] {
+) -> SoftResult[Int32] {
   let round_increment = match rounding {
     NearEven | NearMaxMag => 0x800UL
     Min if sign => 0xFFFUL
@@ -155,9 +155,9 @@ fn round_to_i32(
       if rounding == Odd {
         value = value | 1
       }
-      { value, context: round_inexact_context(context, exact) }
+      { value, context: round_inexact_context(context, exact), }
     } else {
-      { value, context }
+      { value, context, }
     }
   }
 }
@@ -169,7 +169,7 @@ fn round_to_i64_invalid(context : Context, sign : Bool) -> SoftResult[Int64] {
   } else {
     i64_from_pos_overflow(context.specialization)
   }
-  { value, context: round_invalid_context(context) }
+  { value, context: round_invalid_context(context), }
 }
 
 ///|
@@ -204,9 +204,9 @@ fn round_to_i64(
       if rounding == Odd {
         value = value | 1L
       }
-      { value, context: round_inexact_context(context, exact) }
+      { value, context: round_inexact_context(context, exact), }
     } else {
-      { value, context }
+      { value, context, }
     }
   }
 }

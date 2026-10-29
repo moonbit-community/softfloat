@@ -1,5 +1,5 @@
 ///|
-fn assert_flags(value : Context, bits : UInt) -> Unit raise {
+fn assert_flags(value : Context, bits : UInt32) -> Unit raise {
   @debug.assert_eq(value.flags.to_bits(), bits)
 }
 

@@ -17,7 +17,7 @@ priv struct UInt64Extra {
 
 ///|
 fn uint128_zero() -> UInt128 {
-  { hi: 0UL, lo: 0UL }
+  { hi: 0UL, lo: 0UL, }
 }
 
 ///|
@@ -30,14 +30,14 @@ fn uint128_is_zero(a : UInt128) -> Bool {
 fn add128(a : UInt128, b : UInt128) -> UInt128 {
   let lo = a.lo + b.lo
   let carry = if lo < a.lo { 1UL } else { 0UL }
-  { hi: a.hi + b.hi + carry, lo }
+  { hi: a.hi + b.hi + carry, lo, }
 }
 
 ///|
 /// Ports `softfloat_sub128` from `s_sub128.c`.
 fn sub128(a : UInt128, b : UInt128) -> UInt128 {
   let borrow = if a.lo < b.lo { 1UL } else { 0UL }
-  { hi: a.hi - b.hi - borrow, lo: a.lo - b.lo }
+  { hi: a.hi - b.hi - borrow, lo: a.lo - b.lo, }
 }
 
 ///|
@@ -48,19 +48,19 @@ fn neg128(a : UInt128) -> UInt128 {
 
 ///|
 /// Ports `softfloat_shortShiftLeft128` from `s_shortShiftLeft128.c`.
-fn short_shift_left128(a : UInt128, dist : Int) -> UInt128 {
+fn short_shift_left128(a : UInt128, dist : Int32) -> UInt128 {
   shift_left128_m(a, dist)
 }
 
 ///|
 /// Typed 128-bit equivalent of `softfloat_shiftLeft128M`.
-fn shift_left128_m(a : UInt128, dist : Int) -> UInt128 {
+fn shift_left128_m(a : UInt128, dist : Int32) -> UInt128 {
   if dist <= 0 {
     a
   } else if dist < 64 {
-    { hi: (a.hi << dist) | (a.lo >> (64 - dist)), lo: a.lo << dist }
+    { hi: (a.hi << dist) | (a.lo >> (64 - dist)), lo: a.lo << dist, }
   } else if dist < 128 {
-    { hi: a.lo << (dist - 64), lo: 0UL }
+    { hi: a.lo << (dist - 64), lo: 0UL, }
   } else {
     uint128_zero()
   }
@@ -81,5 +81,5 @@ fn mul64_to_128(a : UInt64, b : UInt64) -> UInt128 {
   let mid_shifted = mid << 32
   let lo = lo0 + mid_shifted
   let hi = if lo < mid_shifted { hi + 1UL } else { hi }
-  { hi, lo }
+  { hi, lo, }
 }

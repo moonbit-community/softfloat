@@ -7,7 +7,7 @@ fn f64_propagate_nan3_result(
 ) -> SoftResult[F64] {
   let ab = propagate_nan_f64_ui(context, ui_a, ui_b)
   let abc = propagate_nan_f64_ui(ab.context, ab.value, ui_c)
-  { value: F64::from_bits(abc.value), context: abc.context }
+  { value: F64::from_bits(abc.value), context: abc.context, }
 }
 
 ///|
@@ -31,12 +31,12 @@ fn f64_add_mags(
   let exp_diff = exp_a - exp_b
   if exp_diff == 0 {
     if exp_a == 0 {
-      { value: F64::from_bits(ui_a + sig_b), context }
+      { value: F64::from_bits(ui_a + sig_b), context, }
     } else if exp_a == 0x7FF {
       if (sig_a | sig_b) != 0UL {
         f64_propagate_nan_result(context, ui_a, ui_b)
       } else {
-        { value: F64::from_bits(ui_a), context }
+        { value: F64::from_bits(ui_a), context, }
       }
     } else {
       let sign_z = sign_f64_ui(ui_a)
@@ -70,7 +70,7 @@ fn f64_add_mags(
         if sig_a != 0UL {
           return f64_propagate_nan_result(context, ui_a, ui_b)
         }
-        return { value: F64::from_bits(ui_a), context }
+        return { value: F64::from_bits(ui_a), context, }
       }
       exp_z = exp_a
       if exp_b != 0 {
@@ -172,7 +172,7 @@ fn f64_sub_mags(
         if sig_a != 0UL {
           return f64_propagate_nan_result(context, ui_a, ui_b)
         }
-        return { value: F64::from_bits(ui_a), context }
+        return { value: F64::from_bits(ui_a), context, }
       }
       sig_b = sig_b + (if exp_b != 0 { 0x4000000000000000UL } else { sig_b })
       sig_b = shift_right_jam64(sig_b, exp_diff)
@@ -291,7 +291,7 @@ pub fn f64_mul(context : Context, a : F64, b : F64) -> SoftResult[F64] {
   }
   if exp_a == 0 {
     if sig_a == 0UL {
-      return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context }
+      return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context, }
     }
     let norm = norm_subnormal_f64_sig(sig_a)
     exp_a = norm.exp
@@ -299,7 +299,7 @@ pub fn f64_mul(context : Context, a : F64, b : F64) -> SoftResult[F64] {
   }
   if exp_b == 0 {
     if sig_b == 0UL {
-      return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context }
+      return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context, }
     }
     let norm = norm_subnormal_f64_sig(sig_b)
     exp_b = norm.exp
@@ -362,7 +362,7 @@ pub fn f64_div(context : Context, a : F64, b : F64) -> SoftResult[F64] {
     if sig_b != 0UL {
       return f64_propagate_nan_result(context, ui_a, ui_b)
     }
-    return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context }
+    return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context, }
   }
   if exp_b == 0 {
     if sig_b == 0UL {
@@ -380,7 +380,7 @@ pub fn f64_div(context : Context, a : F64, b : F64) -> SoftResult[F64] {
   }
   if exp_a == 0 {
     if sig_a == 0UL {
-      return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context }
+      return { value: F64::from_bits(pack_to_f64_ui(sign_z, 0, 0UL)), context, }
     }
     let norm = norm_subnormal_f64_sig(sig_a)
     exp_a = norm.exp
@@ -452,19 +452,19 @@ pub fn f64_sqrt(context : Context, a : F64) -> SoftResult[F64] {
       return f64_propagate_nan_result(context, ui_a, 0UL)
     }
     if !sign_a {
-      return { value: a, context }
+      return { value: a, context, }
     }
     return f64_invalid_result(context)
   }
   if sign_a {
     if exp_a == 0 && sig_a == 0UL {
-      return { value: a, context }
+      return { value: a, context, }
     }
     return f64_invalid_result(context)
   }
   if exp_a == 0 {
     if sig_a == 0UL {
-      return { value: a, context }
+      return { value: a, context, }
     }
     let norm = norm_subnormal_f64_sig(sig_a)
     exp_a = norm.exp
@@ -539,10 +539,10 @@ pub fn f64_rem(context : Context, a : F64, b : F64) -> SoftResult[F64] {
     if sig_b != 0UL {
       return f64_propagate_nan_result(context, ui_a, ui_b)
     }
-    return { value: a, context }
+    return { value: a, context, }
   }
   if exp_a < exp_b - 1 {
-    return { value: a, context }
+    return { value: a, context, }
   }
   if exp_b == 0 {
     if sig_b == 0UL {
@@ -554,7 +554,7 @@ pub fn f64_rem(context : Context, a : F64, b : F64) -> SoftResult[F64] {
   }
   if exp_a == 0 {
     if sig_a == 0UL {
-      return { value: a, context }
+      return { value: a, context, }
     }
     let norm = norm_subnormal_f64_sig(sig_a)
     exp_a = norm.exp
@@ -568,7 +568,7 @@ pub fn f64_rem(context : Context, a : F64, b : F64) -> SoftResult[F64] {
   let mut have_alt_rem = false
   if exp_diff < 1 {
     if exp_diff < -1 {
-      return { value: a, context }
+      return { value: a, context, }
     }
     sig_b = sig_b << 9
     if exp_diff != 0 {
@@ -690,7 +690,7 @@ pub fn f64_mul_add(
     if sig_c != 0UL {
       return f64_propagate_nan_result(context, 0UL, ui_c)
     }
-    return { value: c, context }
+    return { value: c, context, }
   }
   if exp_a == 0 {
     if sig_a == 0UL {
@@ -733,12 +733,12 @@ pub fn f64_mul_add(
   if exp_diff < 0 {
     exp_z = exp_c
     if sign_z == sign_c || exp_diff < -1 {
-      sig128_z = { ..sig128_z, hi: shift_right_jam64(sig128_z.hi, -exp_diff) }
+      sig128_z = { ..sig128_z, hi: shift_right_jam64(sig128_z.hi, -exp_diff), }
     } else {
       sig128_z = short_shift_right_jam128(sig128_z, 1)
     }
   } else if exp_diff != 0 {
-    sig128_c = shift_right_jam128({ hi: sig_c, lo: 0UL }, exp_diff)
+    sig128_c = shift_right_jam128({ hi: sig_c, lo: 0UL, }, exp_diff)
   }
   let mut sig_z = 0UL
   if sign_z == sign_c {
@@ -756,9 +756,9 @@ pub fn f64_mul_add(
   } else {
     if exp_diff < 0 {
       sign_z = sign_c
-      sig128_z = sub128({ hi: sig_c, lo: 0UL }, sig128_z)
+      sig128_z = sub128({ hi: sig_c, lo: 0UL, }, sig128_z)
     } else if exp_diff == 0 {
-      sig128_z = { ..sig128_z, hi: sig128_z.hi - sig_c }
+      sig128_z = { ..sig128_z, hi: sig128_z.hi - sig_c, }
       if (sig128_z.hi | sig128_z.lo) == 0UL {
         return f64_mul_add_complete_cancellation(context)
       }
@@ -771,7 +771,7 @@ pub fn f64_mul_add(
     }
     if sig128_z.hi == 0UL {
       exp_z = exp_z - 64
-      sig128_z = { hi: sig128_z.lo, lo: 0UL }
+      sig128_z = { hi: sig128_z.lo, lo: 0UL, }
     }
     let shift_dist = count_leading_zeros64(sig128_z.hi) - 1
     exp_z = exp_z - shift_dist
@@ -790,23 +790,23 @@ pub fn f64_mul_add(
 fn f64_mul_add_inf_prod(
   context : Context,
   sign_prod : Bool,
-  exp_mag : Int,
+  exp_mag : Int32,
   sig_mag : UInt64,
   sign_c : Bool,
-  exp_c : Int,
+  exp_c : Int32,
   sig_c : UInt64,
   ui_c : UInt64,
 ) -> SoftResult[F64] {
   if exp_mag != 0 || sig_mag != 0UL {
     let ui_z = pack_to_f64_ui(sign_prod, 0x7FF, 0UL)
     if exp_c != 0x7FF {
-      return { value: F64::from_bits(ui_z), context }
+      return { value: F64::from_bits(ui_z), context, }
     }
     if sig_c != 0UL {
       return f64_propagate_nan_result(context, ui_z, ui_c)
     }
     if sign_prod == sign_c {
-      return { value: F64::from_bits(ui_z), context }
+      return { value: F64::from_bits(ui_z), context, }
     }
   }
   let invalid_context = context.raise_flags(ExceptionFlags::invalid())
@@ -822,14 +822,14 @@ fn f64_mul_add_zero_prod(
   context : Context,
   sign_prod : Bool,
   sign_c : Bool,
-  exp_c : Int,
+  exp_c : Int32,
   sig_c : UInt64,
   ui_c : UInt64,
 ) -> SoftResult[F64] {
   if exp_c == 0 && sig_c == 0UL && sign_prod != sign_c {
     f64_mul_add_complete_cancellation(context)
   } else {
-    { value: F64::from_bits(ui_c), context }
+    { value: F64::from_bits(ui_c), context, }
   }
 }
 

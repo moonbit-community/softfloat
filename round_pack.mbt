@@ -1,18 +1,18 @@
 ///|
 priv struct ExpSig16 {
-  exp : Int
+  exp : Int32
   sig : UInt16
 }
 
 ///|
 priv struct ExpSig32 {
-  exp : Int
-  sig : UInt
+  exp : Int32
+  sig : UInt32
 }
 
 ///|
 priv struct ExpSig64 {
-  exp : Int
+  exp : Int32
   sig : UInt64
 }
 
@@ -20,8 +20,8 @@ priv struct ExpSig64 {
 fn round_pack_increment(
   rounding : RoundingMode,
   sign : Bool,
-  half : UInt,
-) -> UInt {
+  half : UInt32,
+) -> UInt32 {
   match rounding {
     NearEven | NearMaxMag => half
     Min if sign => (half << 1) - 1U
@@ -55,21 +55,21 @@ fn round_pack_raise_overflow_inexact(context : Context) -> Context {
 /// Ports `softfloat_normSubnormalF16Sig` from `s_normSubnormalF16Sig.c`.
 fn norm_subnormal_f16_sig(sig : UInt16) -> ExpSig16 {
   let shift_dist = count_leading_zeros16(sig) - 5
-  { exp: 1 - shift_dist, sig: sig << shift_dist }
+  { exp: 1 - shift_dist, sig: sig << shift_dist, }
 }
 
 ///|
 /// Ports `softfloat_normSubnormalF32Sig` from `s_normSubnormalF32Sig.c`.
-fn norm_subnormal_f32_sig(sig : UInt) -> ExpSig32 {
+fn norm_subnormal_f32_sig(sig : UInt32) -> ExpSig32 {
   let shift_dist = count_leading_zeros32(sig) - 8
-  { exp: 1 - shift_dist, sig: sig << shift_dist }
+  { exp: 1 - shift_dist, sig: sig << shift_dist, }
 }
 
 ///|
 /// Ports `softfloat_normSubnormalF64Sig` from `s_normSubnormalF64Sig.c`.
 fn norm_subnormal_f64_sig(sig : UInt64) -> ExpSig64 {
   let shift_dist = count_leading_zeros64(sig) - 11
-  { exp: 1 - shift_dist, sig: sig << shift_dist }
+  { exp: 1 - shift_dist, sig: sig << shift_dist, }
 }
 
 ///|
@@ -77,8 +77,8 @@ fn norm_subnormal_f64_sig(sig : UInt64) -> ExpSig64 {
 fn round_pack_to_f16(
   context : Context,
   sign : Bool,
-  exp : Int,
-  sig : UInt,
+  exp : Int32,
+  sig : UInt32,
 ) -> SoftResult[F16] {
   let round_increment = round_pack_increment(context.rounding, sign, 0x8U)
   let mut exp = exp
@@ -122,7 +122,10 @@ fn round_pack_to_f16(
   if sig == 0U {
     exp = 0
   }
-  { value: F16::from_bits(pack_to_f16_ui(sign, exp, sig.to_uint16())), context }
+  {
+    value: F16::from_bits(pack_to_f16_ui(sign, exp, sig.to_uint16())),
+    context,
+  }
 }
 
 ///|
@@ -130,8 +133,8 @@ fn round_pack_to_f16(
 fn round_pack_to_bf16(
   context : Context,
   sign : Bool,
-  exp : Int,
-  sig : UInt,
+  exp : Int32,
+  sig : UInt32,
 ) -> SoftResult[BF16] {
   let round_increment = round_pack_increment(context.rounding, sign, 0x40U)
   let mut exp = exp
@@ -186,8 +189,8 @@ fn round_pack_to_bf16(
 fn round_pack_to_f32(
   context : Context,
   sign : Bool,
-  exp : Int,
-  sig : UInt,
+  exp : Int32,
+  sig : UInt32,
 ) -> SoftResult[F32] {
   let round_increment = round_pack_increment(context.rounding, sign, 0x40U)
   let mut exp = exp
@@ -219,7 +222,7 @@ fn round_pack_to_f32(
     context = context.raise_flags(ExceptionFlags::inexact())
     if context.rounding == Odd {
       sig = sig | 1U
-      return { value: F32::from_bits(pack_to_f32_ui(sign, exp, sig)), context }
+      return { value: F32::from_bits(pack_to_f32_ui(sign, exp, sig)), context, }
     }
   }
   if round_bits == 0x40U && context.rounding == NearEven {
@@ -228,7 +231,7 @@ fn round_pack_to_f32(
   if sig == 0U {
     exp = 0
   }
-  { value: F32::from_bits(pack_to_f32_ui(sign, exp, sig)), context }
+  { value: F32::from_bits(pack_to_f32_ui(sign, exp, sig)), context, }
 }
 
 ///|
@@ -236,7 +239,7 @@ fn round_pack_to_f32(
 fn round_pack_to_f64(
   context : Context,
   sign : Bool,
-  exp : Int,
+  exp : Int32,
   sig : UInt64,
 ) -> SoftResult[F64] {
   let round_increment = round_pack_increment64(context.rounding, sign, 0x200UL)
@@ -269,7 +272,7 @@ fn round_pack_to_f64(
     context = context.raise_flags(ExceptionFlags::inexact())
     if context.rounding == Odd {
       sig = sig | 1UL
-      return { value: F64::from_bits(pack_to_f64_ui(sign, exp, sig)), context }
+      return { value: F64::from_bits(pack_to_f64_ui(sign, exp, sig)), context, }
     }
   }
   if round_bits == 0x200UL && context.rounding == NearEven {
@@ -278,7 +281,7 @@ fn round_pack_to_f64(
   if sig == 0UL {
     exp = 0
   }
-  { value: F64::from_bits(pack_to_f64_ui(sign, exp, sig)), context }
+  { value: F64::from_bits(pack_to_f64_ui(sign, exp, sig)), context, }
 }
 
 ///|
@@ -286,8 +289,8 @@ fn round_pack_to_f64(
 fn norm_round_pack_to_f16(
   context : Context,
   sign : Bool,
-  exp : Int,
-  sig : UInt,
+  exp : Int32,
+  sig : UInt32,
 ) -> SoftResult[F16] {
   let shift_dist = count_leading_zeros16(sig.to_uint16()) - 1
   let exp = exp - shift_dist
@@ -310,8 +313,8 @@ fn norm_round_pack_to_f16(
 fn norm_round_pack_to_f32(
   context : Context,
   sign : Bool,
-  exp : Int,
-  sig : UInt,
+  exp : Int32,
+  sig : UInt32,
 ) -> SoftResult[F32] {
   let shift_dist = count_leading_zeros32(sig) - 1
   let exp = exp - shift_dist
@@ -332,7 +335,7 @@ fn norm_round_pack_to_f32(
 fn norm_round_pack_to_f64(
   context : Context,
   sign : Bool,
-  exp : Int,
+  exp : Int32,
   sig : UInt64,
 ) -> SoftResult[F64] {
   let shift_dist = count_leading_zeros64(sig) - 1
